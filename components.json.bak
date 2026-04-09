@@ -1,22 +1,17 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-maia",
+  "style": "default",
   "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.mjs",
     "css": "src/app/(frontend)/globals.css",
-    "baseColor": "neutral",
+    "baseColor": "slate",
     "cssVariables": true,
     "prefix": ""
   },
-  "iconLibrary": "hugeicons",
-  "rtl": false,
   "aliases": {
     "components": "@/components",
     "utils": "@/utilities/ui"
-  },
-  "menuColor": "default",
-  "menuAccent": "subtle",
-  "registries": {}
+  }
 }

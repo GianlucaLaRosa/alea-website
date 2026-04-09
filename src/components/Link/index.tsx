@@ -10,6 +10,8 @@ type CMSLinkType = {
   children?: React.ReactNode
   className?: string
   label?: string | null
+  /** Fires after navigation intent (e.g. close mobile menu) */
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>
   newTab?: boolean | null
   reference?: {
     relationTo: 'pages' | 'posts'
@@ -22,6 +24,28 @@ type CMSLinkType = {
   url?: string | null
 }
 
+export type CMSLinkHrefInput = Pick<
+  CMSLinkType,
+  'type' | 'reference' | 'referenceAnchor' | 'url'
+>
+
+export function resolveCMSLinkHref({
+  type,
+  reference,
+  referenceAnchor,
+  url,
+}: CMSLinkHrefInput): string | null {
+  if (type === 'reference' && typeof reference?.value === 'object' && reference.value.slug) {
+    const prefix = reference.relationTo === 'pages' ? '' : `/${reference.relationTo}`
+    let href = `${prefix}/${reference.value.slug}`
+    const frag = referenceAnchor?.trim().replace(/^#/, '') ?? ''
+    if (frag) href = `${href.split('#')[0]}#${frag}`
+    return href
+  }
+  if (url) return url
+  return null
+}
+
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
@@ -29,6 +53,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     children,
     className,
     label,
+    onClick,
     newTab,
     reference,
     referenceAnchor,
@@ -36,38 +61,25 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
   } = props
 
-  let href: string | null = null
-
-  if (type === 'reference' && typeof reference?.value === 'object' && reference.value.slug) {
-    const prefix = reference.relationTo === 'pages' ? '' : `/${reference.relationTo}`
-    href = `${prefix}/${reference.value.slug}`
-    const frag = referenceAnchor?.trim().replace(/^#/, '') ?? ''
-    if (frag) href = `${href.split('#')[0]}#${frag}`
-  } else if (url) {
-    href = url
-  }
+  const href = resolveCMSLinkHref({ type, reference, referenceAnchor, url })
 
   if (!href) return null
 
-  const size = appearance === 'link' ? 'clear' : sizeFromProps
+  const size = appearance === 'link' ? undefined : (sizeFromProps ?? undefined)
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
-  /* Ensure we don't break any styles set by richText */
-  if (appearance === 'inline') {
-    return (
-      <Link className={cn(className)} href={href} {...newTabProps}>
-        {label && label}
-        {children && children}
-      </Link>
-    )
-  }
-
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
-      <Link className={cn(className)} href={href} {...newTabProps}>
-        {label && label}
-        {children && children}
-      </Link>
-    </Button>
+    <Button
+      className={cn(className)}
+      nativeButton={false}
+      render={
+        <Link href={href} {...newTabProps} onClick={onClick}>
+          {label}
+          {children}
+        </Link>
+      }
+      size={size}
+      variant={appearance === 'inline' ? 'link' : appearance}
+    />
   )
 }

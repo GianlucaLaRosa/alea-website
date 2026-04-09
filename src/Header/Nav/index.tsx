@@ -15,7 +15,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     <nav className="flex gap-3 items-center">
       {navItems.map(({ link, referenceAnchor }, i) => {
         return (
-          <CMSLink key={i} {...link} referenceAnchor={referenceAnchor} appearance="link" className='text-xl'/>
+          <CMSLink key={i} {...link} referenceAnchor={referenceAnchor} appearance="link" className='text-lg'/>
         )
       })}
       <Link href="/search">

@@ -31,6 +31,9 @@
   html {
     @apply font-sans;
   }
+  p {
+    @apply font-paragraph;
+  }
 }
 
 @plugin "@tailwindcss/typography";
@@ -55,7 +58,8 @@
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  --font-paragraph: var(--font-aleo), ui-serif, Georgia, serif;
 }
 
 @layer utilities {
@@ -216,7 +220,6 @@
   --color-warning: var(--warning);
   --color-error: var(--error);
   --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);

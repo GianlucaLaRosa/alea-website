@@ -12,6 +12,9 @@ const config = {
                 fontWeight: 'normal',
                 marginBottom: '0.25em',
               },
+              p: {
+                fontFamily: 'var(--font-aleo), ui-serif, Georgia, serif',
+              },
             },
           ],
         },

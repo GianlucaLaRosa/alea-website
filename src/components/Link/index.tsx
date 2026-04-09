@@ -15,6 +15,8 @@ type CMSLinkType = {
     relationTo: 'pages' | 'posts'
     value: Page | Post | string | number
   } | null
+  /** Appended as URL hash for internal (reference) links only */
+  referenceAnchor?: string | null
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
   url?: string | null
@@ -29,16 +31,21 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     label,
     newTab,
     reference,
+    referenceAnchor,
     size: sizeFromProps,
     url,
   } = props
 
-  const href =
-    type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
-      : url
+  let href: string | null = null
+
+  if (type === 'reference' && typeof reference?.value === 'object' && reference.value.slug) {
+    const prefix = reference.relationTo === 'pages' ? '' : `/${reference.relationTo}`
+    href = `${prefix}/${reference.value.slug}`
+    const frag = referenceAnchor?.trim().replace(/^#/, '') ?? ''
+    if (frag) href = `${href.split('#')[0]}#${frag}`
+  } else if (url) {
+    href = url
+  }
 
   if (!href) return null
 
@@ -48,7 +55,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   /* Ensure we don't break any styles set by richText */
   if (appearance === 'inline') {
     return (
-      <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+      <Link className={cn(className)} href={href} {...newTabProps}>
         {label && label}
         {children && children}
       </Link>
@@ -57,7 +64,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   return (
     <Button asChild className={className} size={size} variant={appearance}>
-      <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+      <Link className={cn(className)} href={href} {...newTabProps}>
         {label && label}
         {children && children}
       </Link>

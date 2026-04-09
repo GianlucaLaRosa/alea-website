@@ -1637,6 +1637,10 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  /**
+   * Shown in the header next to the navigation. If empty, the default logo is used.
+   */
+  logo?: (number | null) | Media;
   navItems?:
     | {
         link: {
@@ -1654,6 +1658,10 @@ export interface Header {
           url?: string | null;
           label: string;
         };
+        /**
+         * For internal links only: HTML id of the target section on the page (without #).
+         */
+        referenceAnchor?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1694,6 +1702,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
   navItems?:
     | T
     | {
@@ -1706,6 +1715,7 @@ export interface HeaderSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        referenceAnchor?: T;
         id?: T;
       };
   updatedAt?: T;

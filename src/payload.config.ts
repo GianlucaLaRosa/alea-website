@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import sharp from 'sharp'
 import path from 'path'

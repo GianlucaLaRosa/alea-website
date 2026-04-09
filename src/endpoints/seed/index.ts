@@ -50,6 +50,7 @@ export const seed = async ({
         slug: global,
         data: {
           navItems: [],
+          ...(global === 'header' ? { logo: null } : {}),
         },
         depth: 0,
         context: {

@@ -1662,6 +1662,37 @@ export interface Header {
          * For internal links only: HTML id of the target section on the page (without #).
          */
         referenceAnchor?: string | null;
+        /**
+         * If off, the label only opens the sub-menu (desktop) or accordion (mobile). If on, the primary URL stays a real link and a separate control opens sub-links.
+         */
+        primaryLinkClickable?: boolean | null;
+        /**
+         * Optional. When empty, this row is a single top-level link.
+         */
+        subNavItems?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              /**
+               * For internal links only: HTML id of the target section on the page (without #).
+               */
+              referenceAnchor?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -1716,6 +1747,22 @@ export interface HeaderSelect<T extends boolean = true> {
               label?: T;
             };
         referenceAnchor?: T;
+        primaryLinkClickable?: T;
+        subNavItems?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              referenceAnchor?: T;
+              id?: T;
+            };
         id?: T;
       };
   updatedAt?: T;

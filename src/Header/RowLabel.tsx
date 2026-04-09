@@ -5,8 +5,10 @@ import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
 export const RowLabel: React.FC<RowLabelProps> = () => {
   const data = useRowLabel<NonNullable<Header['navItems']>[number]>()
 
-  const label = data?.data?.link?.label
-    ? `Nav item ${data.rowNumber !== undefined ? data.rowNumber + 1 : ''}: ${data?.data?.link?.label}`
+  const base = data?.data?.link?.label
+  const subCount = data?.data?.subNavItems?.filter((s) => s?.link?.label).length ?? 0
+  const label = base
+    ? `Nav item ${data.rowNumber !== undefined ? data.rowNumber + 1 : ''}: ${base}${subCount ? ` (${subCount} sub)` : ''}`
     : 'Row'
 
   return <div>{label}</div>

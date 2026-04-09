@@ -21,6 +21,8 @@ import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const useVercelBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim())
+
 export default buildConfig({
   admin: {
     components: {
@@ -69,12 +71,16 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
-    vercelBlobStorage({
-      collections: {
-        media: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
-    }),
+    ...(useVercelBlob
+      ? [
+          vercelBlobStorage({
+            collections: {
+              media: true,
+            },
+            token: process.env.BLOB_READ_WRITE_TOKEN!,
+          }),
+        ]
+      : []),
   ],
   globals: [Header, Footer],
   secret: process.env.PAYLOAD_SECRET,

@@ -1,13 +1,22 @@
-version: '3'
-
+# Avvio: docker compose up -d
+# Connessione da Next sul Mac: host 127.0.0.1, porta 5432 (vedi .env.example)
 services:
   postgres:
-    image: postgres
+    image: postgres:16-alpine
+    restart: unless-stopped
     ports:
-      - '54320:5432'
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: your-database-name # THIS MUST MATCH YOUR DB NAME IN .env
-      POSTGRES_HOST_AUTH_METHOD: trust
-    env_file:
-      - .env
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payload
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d payload']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

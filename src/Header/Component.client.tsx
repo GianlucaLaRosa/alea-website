@@ -1,13 +1,12 @@
 'use client'
+import { SiteLogo } from '@/components/SiteLogo'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { Logo } from '@/components/Logo/Logo'
-import { Media } from '@/components/Media'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -32,19 +31,13 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header className="px-0! container relative z-20 border-b-3 border-accent" {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-6 pr-4 flex justify-end w-full">
-        <Link href="/" className="flex items-center shrink-0 h-28 w-28 absolute left-8 top-7">
-          {typeof data.logo === 'object' && data.logo?.url ? (
-            <Media
-              resource={data.logo}
-              htmlElement={null}
-              imgClassName="max-h-28 w-auto max-w-[12rem]"
-              priority
-            />
-          ) : (
-            <Logo loading="eager" priority="high" className="dark:invert-0" />
-          )}
-        </Link>
+      <div className="relative flex w-full items-center justify-end gap-3 py-6 pr-4 sm:gap-4">
+        <SiteLogo
+          header={data}
+          className="absolute left-8 top-7 flex h-28 w-28 shrink-0 items-center"
+          priority
+        />
+        <ThemeSelector className="shrink-0" />
         <HeaderNav data={data} />
       </div>
     </header>

@@ -1,8 +1,8 @@
-import clsx from 'clsx'
 import React from 'react'
 
 interface Props {
-  className?: string
+  /** Classi complete per l'immagine (merge lato parent per evitare mismatch SSR/client). */
+  className: string
   loading?: 'lazy' | 'eager'
   priority?: 'auto' | 'high' | 'low'
 }
@@ -22,7 +22,7 @@ export const Logo = (props: Props) => {
       loading={loading}
       fetchPriority={priority}
       decoding="async"
-      className={clsx('max-w-28 w-full h-28', className)}
+      className={className}
       src="/alea_logo.png"
     />
   )

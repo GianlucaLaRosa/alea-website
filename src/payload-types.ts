@@ -1705,23 +1705,54 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  /**
+   * Es. sede legale o recapito fisico.
+   */
+  address?: string | null;
+  /**
+   * Indirizzo mostrato nel sito (es. info@...).
+   */
+  emailInfo?: string | null;
+  emailPec?: string | null;
+  /**
+   * CF dell’ente (es. 90067910324).
+   */
+  codiceFiscale?: string | null;
+  /**
+   * Icone cliccabili che aprono il profilo o il gruppo indicato.
+   */
+  socialLinks?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
+        platform:
+          | 'facebook'
+          | 'instagram'
+          | 'linkedin'
+          | 'twitter'
+          | 'youtube'
+          | 'whatsapp'
+          | 'telegram'
+          | 'github'
+          | 'other';
+        /**
+         * Link completo (https://...).
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Per ogni riga: titolo visibile nel sito e file caricato (PDF, ODT, ecc.). Non sono link manuali: usa il pulsante di upload / scegli da Media.
+   */
+  documents?:
+    | {
+        /**
+         * Es. Statuto sociale, Regolamento interno.
+         */
+        label: string;
+        /**
+         * Carica un nuovo file o seleziona un documento già in Media.
+         */
+        file: number | Media;
         id?: string | null;
       }[]
     | null;
@@ -1774,18 +1805,22 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  address?: T;
+  emailInfo?: T;
+  emailPec?: T;
+  codiceFiscale?: T;
+  socialLinks?:
     | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  documents?:
+    | T
+    | {
+        label?: T;
+        file?: T;
         id?: T;
       };
   updatedAt?: T;

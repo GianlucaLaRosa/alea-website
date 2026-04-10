@@ -1,30 +1,150 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import Link from 'next/link'
 import React from 'react'
 
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { SiteLogo } from '@/components/SiteLogo'
 import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { cn } from '@/utilities/ui'
+
+import { FooterSocialLinks } from './FooterSocialLinks'
+import { flattenHeaderNavForFooter } from './flattenHeaderNav'
 
 export async function Footer() {
-  const footerData = await getCachedGlobal('footer', 1)()
+  const [footerData, headerData] = await Promise.all([
+    getCachedGlobal('footer', 1)(),
+    getCachedGlobal('header', 1)(),
+  ])
 
-  const navItems = footerData?.navItems || []
+  const navEntries = flattenHeaderNavForFooter(headerData?.navItems)
+  const documents = footerData?.documents || []
+
+  const { address, emailInfo, emailPec, codiceFiscale, socialLinks } = footerData ?? {}
+
+  const year = new Date().getFullYear()
+
+  const hasSocial = Boolean(socialLinks?.length)
+  const hasNav = navEntries.length > 0
+  const pairSocialNav = hasSocial && hasNav
+
+  const socialBlock = hasSocial ? (
+    <div className="min-w-0">
+      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white/50 sm:mb-3">
+        Social
+      </p>
+      <FooterSocialLinks items={socialLinks} />
+    </div>
+  ) : null
+
+  const navBlock = hasNav ? (
+    <nav
+      className="flex min-w-0 flex-col gap-2 sm:min-w-[12rem] sm:shrink-0 sm:gap-2.5"
+      aria-label="Navigazione"
+    >
+      <p className="mb-0.5 text-xs font-medium uppercase tracking-wide text-white/50 sm:mb-1">
+        Navigazione
+      </p>
+      {navEntries.map(({ key, link, referenceAnchor }) => (
+        <CMSLink
+          key={key}
+          className="w-fit text-sm text-white/90 underline decoration-white/30 underline-offset-4 transition hover:text-white hover:decoration-white sm:text-base"
+          referenceAnchor={referenceAnchor}
+          {...link}
+        />
+      ))}
+    </nav>
+  ) : null
 
   return (
-    <footer className="mt-auto border-t border-border bg-black dark:bg-card text-white">
-      <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
-        <Link className="flex items-center" href="/">
-          <Logo />
-        </Link>
+    <footer className="mt-auto border-t border-border bg-black text-white dark:bg-card">
+      <div className="container flex flex-col gap-7 py-7 sm:gap-10 sm:py-10">
+        {/* Stesso breakpoint dell&apos;header: &lt; sm stack compatto, ≥ sm riga orizzontale */}
+        <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:justify-between sm:gap-8 lg:gap-12">
+          <div className="flex w-full shrink-0 justify-center sm:w-auto sm:justify-start">
+            <SiteLogo
+              header={headerData}
+              className="flex items-center"
+              imgClassName="max-h-[4.5rem] w-auto max-w-[9rem] sm:max-h-28 sm:max-w-[12rem]"
+            />
+          </div>
 
-        <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <ThemeSelector />
-          <nav className="flex flex-col md:flex-row gap-4">
-            {navItems.map(({ link }, i) => {
-              return <CMSLink className="text-white" key={i} {...link} />
-            })}
-          </nav>
+          <div className="max-w-md min-w-0 space-y-2.5 text-sm leading-relaxed text-white/90 max-sm:mx-auto max-sm:max-w-none max-sm:text-center sm:space-y-3 lg:max-w-sm sm:text-left">
+            {address ? (
+              <p className="whitespace-pre-line text-white">{address}</p>
+            ) : null}
+            {emailInfo ? (
+              <p>
+                <a
+                  className="underline decoration-white/40 underline-offset-4 transition hover:decoration-white"
+                  href={`mailto:${emailInfo}`}
+                >
+                  {emailInfo}
+                </a>
+              </p>
+            ) : null}
+            {emailPec ? (
+              <p>
+                <span className="mr-1 text-white/60">PEC</span>
+                <a
+                  className="underline decoration-white/40 underline-offset-4 transition hover:decoration-white"
+                  href={`mailto:${emailPec}`}
+                >
+                  {emailPec}
+                </a>
+              </p>
+            ) : null}
+            {codiceFiscale ? (
+              <p className="text-white/80">
+                <span className="text-white/55">CF</span> {codiceFiscale}
+              </p>
+            ) : null}
+          </div>
+
+          {pairSocialNav ? (
+            <div className="grid grid-cols-2 gap-6 max-sm:items-start sm:contents">
+              {socialBlock}
+              {navBlock}
+            </div>
+          ) : (
+            <>
+              {socialBlock}
+              {navBlock}
+            </>
+          )}
+        </div>
+
+        <div
+          className={cn(
+            'flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:gap-8 sm:pt-8',
+            documents.length > 0 ? 'sm:justify-between' : 'sm:justify-end',
+          )}
+        >
+          {documents.length > 0 ? (
+            <nav
+              aria-label="Documenti"
+              className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-2"
+            >
+              {documents.map((row) => {
+                const file = row.file
+                if (typeof file !== 'object' || !file?.url) return null
+                const href = getMediaUrl(file.url, file.updatedAt)
+                return (
+                  <a
+                    key={row.id}
+                    href={href}
+                    download={file.filename ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-11 w-fit py-2 leading-snug text-white/90 underline decoration-white/35 underline-offset-4 sm:min-h-0 sm:py-0 hover:decoration-white"
+                  >
+                    {row.label}
+                  </a>
+                )
+              })}
+            </nav>
+          ) : null}
+          <p className="w-full text-center text-xs text-white/55 max-sm:pt-1 sm:w-auto sm:shrink-0 sm:text-right sm:text-sm">
+            Copyright © {year}
+          </p>
         </div>
       </div>
     </footer>

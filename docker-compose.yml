@@ -1,4 +1,5 @@
-# Avvio: docker compose up -d
+# Avvio: pnpm docker:up  |  Stop: pnpm docker:down  |  Migrazioni: pnpm docker:migrate
+# DB incoerente (es. enum already exists): pnpm docker:reset — cancella il volume postgres_data
 # Connessione da Next sul Mac: host 127.0.0.1, porta 5432 (vedi .env.example)
 services:
   postgres:

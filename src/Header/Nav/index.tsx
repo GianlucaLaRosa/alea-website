@@ -6,6 +6,7 @@ import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink, resolveCMSLinkHref } from '@/components/Link'
 import { Button } from '@/components/ui/button'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import {
   Accordion,
   AccordionContent,
@@ -267,6 +268,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <span className="sr-only">Search</span>
           <SearchIcon className="w-5 text-primary" />
         </Link>
+        <ThemeSelector />
       </nav>
 
       <div className="flex items-center gap-1 sm:hidden">
@@ -277,6 +279,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <span className="sr-only">Search</span>
           <SearchIcon className="w-5 text-primary" />
         </Link>
+        <ThemeSelector />
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger render={<Button variant="ghost" size="icon" />}>
             <span className="sr-only">Open menu</span>

@@ -65,7 +65,8 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null
 
-  const size = appearance === 'link' ? undefined : (sizeFromProps ?? undefined)
+  const variant = appearance === 'inline' ? 'link' : appearance
+  const size = sizeFromProps ?? (variant === 'link' ? 'link' : undefined)
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
   return (
@@ -79,7 +80,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
         </Link>
       }
       size={size}
-      variant={appearance === 'inline' ? 'link' : appearance}
+      variant={variant}
     />
   )
 }

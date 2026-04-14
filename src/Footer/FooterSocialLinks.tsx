@@ -24,7 +24,7 @@ export function FooterSocialLinks({ items }: { items: SocialRow[] | null | undef
   if (!items?.length) return null
 
   return (
-    <ul className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+    <ul className="flex flex-row flex-wrap items-center justify-center gap-2 sm:justify-start">
       {items.map((item, i) => {
         const href = normalizeUrl(item.url ?? '')
         if (!href) return null

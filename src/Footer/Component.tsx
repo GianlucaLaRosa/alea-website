@@ -24,11 +24,12 @@ export async function Footer() {
 
   const hasSocial = Boolean(socialLinks?.length)
   const hasNav = navEntries.length > 0
-  const pairSocialNav = hasSocial && hasNav
+  const hasSedeContatti =
+    Boolean(address) || Boolean(emailInfo) || Boolean(emailPec) || Boolean(codiceFiscale)
 
   const socialBlock = hasSocial ? (
-    <div className="min-w-0">
-      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white/50 sm:mb-3">
+    <div className="flex min-w-0 flex-col items-center max-sm:w-full sm:items-start">
+      <p className="mb-2 w-full text-xs font-medium uppercase tracking-wide text-white/50 max-sm:text-center sm:mb-3 sm:text-left">
         Social
       </p>
       <FooterSocialLinks items={socialLinks} />
@@ -37,14 +38,15 @@ export async function Footer() {
 
   const navBlock = hasNav ? (
     <nav
-      className="flex min-w-0 flex-col gap-2 sm:min-w-[12rem] sm:shrink-0 sm:gap-2.5"
+      className="flex min-w-0 flex-col items-center gap-2 max-sm:w-full max-sm:text-center sm:min-w-[12rem] sm:shrink-0 sm:items-start sm:gap-2.5 sm:text-left"
       aria-label="Navigazione"
     >
-      <p className="mb-0.5 text-xs font-medium uppercase tracking-wide text-white/50 sm:mb-1">
+      <p className="mb-0.5 w-full text-xs font-medium uppercase tracking-wide text-white/50 max-sm:text-center sm:mb-1 sm:text-left">
         Navigazione
       </p>
       {navEntries.map(({ key, link, referenceAnchor }) => (
         <CMSLink
+          appearance="link"
           key={key}
           className="w-fit text-sm text-white/90 underline decoration-white/30 underline-offset-4 transition hover:text-white hover:decoration-white sm:text-base"
           referenceAnchor={referenceAnchor}
@@ -56,7 +58,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-auto border-t border-border bg-black text-white dark:bg-card">
-      <div className="container flex flex-col gap-7 py-7 sm:gap-10 sm:py-10">
+      <div className="container flex flex-col gap-7 py-7 sm:gap-10 sm:pt-10 sm:pb-7">
         {/* Stesso breakpoint dell&apos;header: &lt; sm stack compatto, ≥ sm riga orizzontale */}
         <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:justify-between sm:gap-8 lg:gap-12">
           <div className="flex w-full shrink-0 justify-center sm:w-auto sm:justify-start">
@@ -68,6 +70,11 @@ export async function Footer() {
           </div>
 
           <div className="max-w-md min-w-0 space-y-2.5 text-sm leading-relaxed text-white/90 max-sm:mx-auto max-sm:max-w-none max-sm:text-center sm:space-y-3 lg:max-w-sm sm:text-left">
+            {hasSedeContatti ? (
+              <p className="text-xs font-medium uppercase tracking-wide text-white/50">
+                Sede e contatti
+              </p>
+            ) : null}
             {address ? (
               <p className="whitespace-pre-line text-white">{address}</p>
             ) : null}
@@ -99,22 +106,17 @@ export async function Footer() {
             ) : null}
           </div>
 
-          {pairSocialNav ? (
-            <div className="grid grid-cols-2 gap-6 max-sm:items-start sm:contents">
-              {socialBlock}
+          {hasSocial || hasNav ? (
+            <div className="flex w-full flex-col items-center gap-8 sm:contents sm:w-auto sm:gap-0">
               {navBlock}
+              {socialBlock}
             </div>
-          ) : (
-            <>
-              {socialBlock}
-              {navBlock}
-            </>
-          )}
+          ) : null}
         </div>
 
         <div
           className={cn(
-            'flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:gap-8 sm:pt-8',
+            'flex flex-col gap-4 border-t border-white/10 pt-4 sm:flex-row sm:items-center sm:gap-8 sm:pt-8',
             documents.length > 0 ? 'sm:justify-between' : 'sm:justify-end',
           )}
         >

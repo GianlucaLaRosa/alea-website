@@ -29,6 +29,8 @@ const buttonVariants = cva(
         "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
+        /** Text links: no button padding so labels align with headings / prose */
+        link: "h-auto min-h-0 gap-0 px-0 py-0 has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
       },
     },
     defaultVariants: {

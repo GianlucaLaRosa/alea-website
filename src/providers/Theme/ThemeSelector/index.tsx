@@ -1,59 +1,42 @@
 'use client'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/utilities/ui'
-import React, { useState } from 'react'
-
-import type { Theme } from './types'
+import React from 'react'
+import { SunMoon } from 'lucide-react'
 
 import { useTheme } from '..'
-import { themeLocalStorageKey } from './types'
 
 export type ThemeSelectorProps = {
   className?: string
 }
 
 export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ className }) => {
-  const { setTheme } = useTheme()
-  const [value, setValue] = useState('')
+  const { theme, setTheme } = useTheme()
 
-  const onThemeChange = (themeToSet: string | null) => {
-    if (themeToSet === 'auto' || themeToSet === null) {
-      setTheme(null)
-      setValue('auto')
-    } else if (themeToSet === 'light' || themeToSet === 'dark') {
-      setTheme(themeToSet as Theme)
-      setValue(themeToSet)
-    }
-  }
-
-  React.useEffect(() => {
-    const preference = window.localStorage.getItem(themeLocalStorageKey)
-    setValue(preference ?? 'auto')
-  }, [])
+  const isDark = theme === 'dark'
+  const tooltipLabel = isDark ? 'Light theme' : 'Dark theme'
 
   return (
-    <Select onValueChange={onThemeChange} value={value}>
-      <SelectTrigger
-        aria-label="Select a theme"
-        className={cn(
-          'w-auto gap-2 border-none bg-transparent pl-0 text-primary md:pl-3',
-          className,
-        )}
-      >
-        <SelectValue placeholder="Theme" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="auto">Auto</SelectItem>
-        <SelectItem value="light">Light</SelectItem>
-        <SelectItem value="dark">Dark</SelectItem>
-      </SelectContent>
-    </Select>
+    <Tooltip>
+      <TooltipTrigger
+        delay={200}
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={cn('shrink-0 text-primary', className)}
+            aria-label={tooltipLabel}
+            aria-pressed={isDark}
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+          >
+            <SunMoon className="size-5" aria-hidden />
+          </Button>
+        }
+      />
+      <TooltipContent side="bottom">{tooltipLabel}</TooltipContent>
+    </Tooltip>
   )
 }

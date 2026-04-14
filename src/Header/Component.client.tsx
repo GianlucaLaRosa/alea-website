@@ -1,6 +1,5 @@
 'use client'
 import { SiteLogo } from '@/components/SiteLogo'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -37,7 +36,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           className="absolute left-8 top-7 flex h-28 w-28 shrink-0 items-center"
           priority
         />
-        <ThemeSelector className="shrink-0" />
         <HeaderNav data={data} />
       </div>
     </header>

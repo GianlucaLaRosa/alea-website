@@ -1,12 +1,17 @@
-import { Button, type ButtonProps } from '@/components/ui/button'
+import type { VariantProps } from 'class-variance-authority'
+
+import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
 import type { Page, Post } from '@/payload-types'
 
+type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>['variant']>
+type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>['size']>
+
 type CMSLinkType = {
-  appearance?: 'inline' | ButtonProps['variant']
+  appearance?: 'inline' | ButtonVariant | null
   children?: React.ReactNode
   className?: string
   label?: string | null
@@ -19,7 +24,7 @@ type CMSLinkType = {
   } | null
   /** Appended as URL hash for internal (reference) links only */
   referenceAnchor?: string | null
-  size?: ButtonProps['size'] | null
+  size?: ButtonSize | null
   type?: 'custom' | 'reference' | null
   url?: string | null
 }
@@ -65,8 +70,9 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null
 
-  const variant = appearance === 'inline' ? 'link' : appearance
-  const size = sizeFromProps ?? (variant === 'link' ? 'link' : undefined)
+  const variant =
+    appearance == null || appearance === 'inline' ? 'link' : appearance
+  const size = sizeFromProps ?? undefined
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
   return (

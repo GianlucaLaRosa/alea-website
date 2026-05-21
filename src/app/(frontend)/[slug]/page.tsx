@@ -8,6 +8,7 @@ import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { EventsCarouselSection } from '@/components/EventsCarousel/EventsCarouselSection'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
@@ -65,9 +66,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+  const isHome = decodedSlug === 'home'
 
   return (
     <article className="pt-16 pb-24">
+      {isHome ? <EventsCarouselSection /> : null}
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

@@ -1,26 +1,24 @@
 import React from 'react'
 
-const defaultLabels = {
-  plural: 'Docs',
-  singular: 'Doc',
-}
+import type { LocaleCode } from '@/config/localization'
+import { formatMessage, t, type MessageKey } from '@/i18n/messages'
 
-const defaultCollectionLabels = {
-  posts: {
-    plural: 'Posts',
-    singular: 'Post',
-  },
+type CollectionKey = 'posts'
+
+const collectionKeys: Record<CollectionKey, { singular: MessageKey; plural: MessageKey }> = {
+  posts: { singular: 'posts.singular', plural: 'posts.plural' },
 }
 
 export const PageRange: React.FC<{
   className?: string
-  collection?: keyof typeof defaultCollectionLabels
+  collection?: CollectionKey
   collectionLabels?: {
     plural?: string
     singular?: string
   }
   currentPage?: number
   limit?: number
+  locale: LocaleCode
   totalDocs?: number
 }> = (props) => {
   const {
@@ -29,6 +27,7 @@ export const PageRange: React.FC<{
     collectionLabels: collectionLabelsFromProps,
     currentPage,
     limit,
+    locale,
     totalDocs,
   } = props
 
@@ -38,20 +37,33 @@ export const PageRange: React.FC<{
   let indexEnd = (currentPage || 1) * (limit || 1)
   if (totalDocs && indexEnd > totalDocs) indexEnd = totalDocs
 
-  const { plural, singular } =
-    collectionLabelsFromProps ||
-    (collection ? defaultCollectionLabels[collection] : undefined) ||
-    defaultLabels ||
-    {}
+  const messageKeys = collection ? collectionKeys[collection] : null
+
+  const singular = collectionLabelsFromProps?.singular
+    ?? (messageKeys ? t(locale, messageKeys.singular) : '')
+  const plural = collectionLabelsFromProps?.plural
+    ?? (messageKeys ? t(locale, messageKeys.plural) : '')
+
+  if (typeof totalDocs === 'undefined' || totalDocs === 0) {
+    return (
+      <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
+        {t(locale, 'pageRange.noResults')}
+      </div>
+    )
+  }
+
+  const label = totalDocs > 1 ? plural : singular
+  const range =
+    indexStart > 0 && indexEnd > indexStart ? ` - ${indexEnd}` : indexEnd > 0 ? ` - ${indexEnd}` : ''
 
   return (
     <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
-      {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
-      {typeof totalDocs !== 'undefined' &&
-        totalDocs > 0 &&
-        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ''} of ${totalDocs} ${
-          totalDocs > 1 ? plural : singular
-        }`}
+      {formatMessage(locale, 'pageRange.showing', {
+        start: indexStart,
+        range,
+        total: totalDocs,
+        label,
+      })}
     </div>
   )
 }

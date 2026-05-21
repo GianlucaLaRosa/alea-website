@@ -3,77 +3,90 @@ import { getPayload } from 'payload'
 
 import { EventsCarousel } from './EventsCarousel'
 import type { Event } from '@/payload-types'
+import { eventVisibilityWhere } from '@/utilities/eventVisibilityWhere'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
+import { getRequestLocale } from '@/utilities/getRequestLocale'
 import { serializeEventForClient } from '@/utilities/serializeEventForClient'
+import { sortEventsForDisplay } from '@/utilities/sortEventsForDisplay'
 
-function byStartAtAsc(a: Event, b: Event) {
-  const t0 = new Date(a.startAt).getTime()
-  const t1 = new Date(b.startAt).getTime()
-  return t0 - t1
-}
+const MAX_PAST_IN_CAROUSEL = 2
 
 export async function EventsCarouselSection() {
   const payload = await getPayload({ config: configPromise })
+  const [locale, localeOptions] = await Promise.all([getRequestLocale(), getPayloadLocaleOptions()])
   const now = new Date().toISOString()
 
   const { totalDocs } = await payload.find({
     collection: 'events',
     depth: 0,
+    draft: false,
     limit: 1,
     overrideAccess: false,
+    where: eventVisibilityWhere,
+    ...localeOptions,
   })
 
   if (totalDocs === 0) {
     return null
   }
 
-  const { docs: upcomingRaw } = await payload.find({
-    collection: 'events',
-    depth: 1,
-    limit: 24,
-    overrideAccess: false,
-    sort: 'startAt',
-    where: {
-      endAt: {
-        greater_than: now,
-      },
-    },
-  })
-
-  let sourceDocs: Event[]
-  let pastEventsOnly: boolean
-
-  if (upcomingRaw.length > 0) {
-    sourceDocs = [...(upcomingRaw as Event[])].sort(byStartAtAsc)
-    pastEventsOnly = false
-  } else {
-    const { docs: pastRaw } = await payload.find({
+  const [{ docs: upcomingRaw }, { docs: pastRaw }] = await Promise.all([
+    payload.find({
       collection: 'events',
-      depth: 1,
-      limit: 5,
+      depth: 2,
+      draft: false,
+      limit: 24,
+      overrideAccess: false,
+      sort: 'startAt',
+      where: {
+        and: [
+          eventVisibilityWhere,
+          {
+            endAt: {
+              greater_than: now,
+            },
+          },
+        ],
+      },
+      ...localeOptions,
+    }),
+    payload.find({
+      collection: 'events',
+      depth: 2,
+      draft: false,
+      limit: MAX_PAST_IN_CAROUSEL,
       overrideAccess: false,
       sort: '-startAt',
       where: {
-        endAt: {
-          less_than_equal: now,
-        },
+        and: [
+          eventVisibilityWhere,
+          {
+            endAt: {
+              less_than_equal: now,
+            },
+          },
+        ],
       },
-    })
+      ...localeOptions,
+    }),
+  ])
 
-    if (pastRaw.length === 0) {
-      return null
-    }
+  const upcoming = sortEventsForDisplay(upcomingRaw as Event[])
+  const past = sortEventsForDisplay(pastRaw as Event[]).slice(0, MAX_PAST_IN_CAROUSEL)
 
-    sourceDocs = [...(pastRaw as Event[])].sort(byStartAtAsc)
-    pastEventsOnly = true
+  const sourceDocs = [...upcoming, ...past]
+
+  if (sourceDocs.length === 0) {
+    return null
   }
 
   const events = sourceDocs
-    .map((doc) => serializeEventForClient(doc))
+    .map((doc) => serializeEventForClient(doc, locale))
     .filter((e): e is NonNullable<typeof e> => e !== null)
 
   if (events.length === 0) {
     return null
   }
 
-  return <EventsCarousel events={events} pastEventsOnly={pastEventsOnly} />
+  return <EventsCarousel events={events} />
 }

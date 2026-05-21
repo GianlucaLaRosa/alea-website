@@ -5,6 +5,9 @@ import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { t } from '@/i18n/messages'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
+import { getRequestLocale } from '@/utilities/getRequestLocale'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
@@ -18,8 +21,10 @@ type Args = {
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
+  const locale = await getRequestLocale()
   const { pageNumber } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
+  const localeOptions = await getPayloadLocaleOptions()
 
   const sanitizedPageNumber = Number(pageNumber)
 
@@ -31,6 +36,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     limit: 12,
     page: sanitizedPageNumber,
     overrideAccess: false,
+    ...localeOptions,
   })
 
   return (
@@ -38,7 +44,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>{t(locale, 'posts.title')}</h1>
         </div>
       </div>
 
@@ -47,6 +53,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           collection="posts"
           currentPage={posts.page}
           limit={12}
+          locale={locale}
           totalDocs={posts.totalDocs}
         />
       </div>
@@ -63,9 +70,12 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const locale = await getRequestLocale()
   const { pageNumber } = await paramsPromise
+  const pageLabel = pageNumber ? ` — ${pageNumber}` : ''
+
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `${t(locale, 'posts.title')}${pageLabel}`,
   }
 }
 

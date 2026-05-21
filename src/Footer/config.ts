@@ -18,6 +18,7 @@ export const Footer: GlobalConfig = {
             {
               name: 'address',
               type: 'textarea',
+              localized: true,
               label: 'Indirizzo',
               admin: {
                 description: 'Es. sede legale o recapito fisico.',
@@ -87,6 +88,7 @@ export const Footer: GlobalConfig = {
     {
       name: 'documents',
       type: 'array',
+      localized: true,
       label: 'Documenti scaricabili',
       admin: {
         description:

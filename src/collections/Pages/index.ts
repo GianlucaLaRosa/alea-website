@@ -59,6 +59,7 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       type: 'tabs',
@@ -72,6 +73,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
+              localized: true,
               blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
               required: true,
               admin: {
@@ -92,12 +94,16 @@ export const Pages: CollectionConfig<'pages'> = {
             }),
             MetaTitleField({
               hasGenerateFn: true,
+              overrides: { localized: true },
             }),
             MetaImageField({
               relationTo: 'media',
+              overrides: { localized: true },
             }),
 
-            MetaDescriptionField({}),
+            MetaDescriptionField({
+              overrides: { localized: true },
+            }),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

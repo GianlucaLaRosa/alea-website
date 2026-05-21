@@ -10,15 +10,19 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post } from '@/payload-types'
+import { Event, Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
+const generateTitle: GenerateTitle<Post | Page | Event> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
+const generateURL: GenerateURL<Post | Page | Event> = ({ doc }) => {
   const url = getServerSideURL()
+
+  if (doc && 'startAt' in doc && doc.slug) {
+    return `${url}/eventi/${doc.slug}`
+  }
 
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
@@ -50,6 +54,7 @@ export const plugins: Plugin[] = [
     collections: ['categories'],
     generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
   }),
+  // Campi SEO definiti nelle collection (tab «SEO»); il plugin fornisce solo generateTitle/URL e gli endpoint.
   seoPlugin({
     generateTitle,
     generateURL,

@@ -25,6 +25,8 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getCachedEnabledPublicLocales } from '@/utilities/getPublicLocales'
+import { getRequestLocale } from '@/utilities/getRequestLocale'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -32,11 +34,12 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const [locale, locales] = await Promise.all([getRequestLocale(), getCachedEnabledPublicLocales()])
 
   return (
     <html
       className={cn(lato.variable, aleo.variable, GeistMono.variable)}
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
     >
       <head>
@@ -45,7 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
-        <Providers>
+        <Providers locale={locale} locales={locales}>
           <AdminBar
             adminBarProps={{
               preview: isEnabled,

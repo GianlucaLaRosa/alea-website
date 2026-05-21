@@ -71,6 +71,7 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    tags: Tag;
     events: Event;
     users: User;
     redirects: Redirect;
@@ -94,6 +95,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -110,16 +112,18 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('it' | 'en' | 'sl') | ('it' | 'en' | 'sl')[];
   globals: {
     header: Header;
     footer: Footer;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'it' | 'en' | 'sl';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -785,12 +789,59 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  title: string;
+  /**
+   * Colore mostrato sul sito per questo tag.
+   */
+  color: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Gli eventi già pubblicati compaiono con filtro «Pubblicato» o «Tutti» in alto a destra (non solo «Bozza»).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
 export interface Event {
   id: number;
+  /**
+   * In bozza, se lasci vuoto viene impostato «Nuovo evento» al salvataggio. Lo slug è reso univoco automaticamente.
+   */
   title: string;
-  image: number | Media;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug?: string | null;
+  /**
+   * Se attivo, l’evento non compare nel carosello né nell’elenco /eventi (resta modificabile in admin).
+   */
+  hidden?: boolean | null;
+  /**
+   * Priorità nel carosello in homepage (prima degli altri eventi).
+   */
+  featured?: boolean | null;
+  status: 'scheduled' | 'sold_out' | 'cancelled';
+  publishedAt?: string | null;
+  /**
+   * Usata nel carosello, nella modale e nella pagina dell’evento.
+   */
+  coverImage: number | Media;
+  /**
+   * Immagini aggiuntive mostrate come miniature in modale e pagina evento.
+   */
+  gallery?: (number | Media)[] | null;
+  tags?: (number | Tag)[] | null;
   /**
    * Data e ora di inizio. Per un evento senza orario specifico, imposta la mezzanotte (00:00).
    */
@@ -800,6 +851,14 @@ export interface Event {
    */
   endAt: string;
   address?: string | null;
+  /**
+   * Opzionale. Usata per la mappa se presente.
+   */
+  latitude?: number | null;
+  longitude?: number | null;
+  /**
+   * Paragrafi, titoli (H2–H4), liste, citazioni, grassetto/corsivo/sottolineato/barrato, codice inline, link, separatore.
+   */
   description?: {
     root: {
       type: string;
@@ -815,6 +874,15 @@ export interface Event {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Generato automaticamente da titolo, luogo, tag e descrizione (ricerca su /eventi).
+   */
+  searchText?: string | null;
+  /**
+   * Link esterno per prenotazione o acquisto biglietti.
+   */
+  ticketUrl?: string | null;
+  ticketLabel?: string | null;
   links?:
     | {
         label: string;
@@ -822,8 +890,17 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1030,6 +1107,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
       } | null)
     | ({
         relationTo: 'events';
@@ -1383,15 +1464,40 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  title?: T;
+  color?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
   title?: T;
-  image?: T;
+  generateSlug?: T;
+  slug?: T;
+  hidden?: T;
+  featured?: T;
+  status?: T;
+  publishedAt?: T;
+  coverImage?: T;
+  gallery?: T;
+  tags?: T;
   startAt?: T;
   endAt?: T;
   address?: T;
+  latitude?: T;
+  longitude?: T;
   description?: T;
+  searchText?: T;
+  ticketUrl?: T;
+  ticketLabel?: T;
   links?:
     | T
     | {
@@ -1399,8 +1505,16 @@ export interface EventsSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1830,6 +1944,26 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Attiva o disattiva le lingue visibili nel selettore del sito e nell’admin. Per aggiungere una nuova lingua (codice non presente in elenco), contatta lo sviluppatore: serve un aggiornamento della configurazione e una migrazione database.
+   */
+  publicLocales?:
+    | {
+        code: 'it' | 'en' | 'sl';
+        label: string;
+        enabled?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1898,6 +2032,23 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  publicLocales?:
+    | T
+    | {
+        code?: T;
+        label?: T;
+        enabled?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -1922,6 +2073,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'events';
+          value: number | Event;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

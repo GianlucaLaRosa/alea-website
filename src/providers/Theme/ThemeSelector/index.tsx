@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useLocaleContext } from '@/providers/Locale'
 import { cn } from '@/utilities/ui'
 import React from 'react'
 import { SunMoon } from 'lucide-react'
@@ -14,9 +15,10 @@ export type ThemeSelectorProps = {
 
 export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ className }) => {
   const { theme, setTheme } = useTheme()
+  const { t } = useLocaleContext()
 
   const isDark = theme === 'dark'
-  const tooltipLabel = isDark ? 'Light theme' : 'Dark theme'
+  const tooltipLabel = isDark ? t('theme.light') : t('theme.dark')
 
   return (
     <Tooltip>

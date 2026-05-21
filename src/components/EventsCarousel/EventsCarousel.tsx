@@ -17,16 +17,21 @@ import {
   DialogContent,
 } from '@/components/ui/dialog'
 import { EventDialogBody } from '@/components/EventDialogBody'
+import { useLocaleContext } from '@/providers/Locale'
 import { getEventsCarouselStartIndex } from '@/utilities/getEventsCarouselStartIndex'
+import { getMediaObjectPosition } from '@/utilities/getMediaObjectPosition'
 import type { SerializedEventForClient } from '@/utilities/serializeEventForClient'
 
 type Props = {
   events: SerializedEventForClient[]
-  /** Eventi già terminati (fallback): slide meno saturate */
-  pastEventsOnly?: boolean
 }
 
-export function EventsCarousel({ events, pastEventsOnly = false }: Props) {
+function isPastEvent(event: SerializedEventForClient, now = Date.now()): boolean {
+  return new Date(event.endAt).getTime() <= now
+}
+
+export function EventsCarousel({ events }: Props) {
+  const { t, tf } = useLocaleContext()
   const [api, setApi] = React.useState<CarouselApi>()
   const startIndex = React.useMemo(() => getEventsCarouselStartIndex(events), [events])
   const [current, setCurrent] = React.useState(() => startIndex + 1)
@@ -48,15 +53,12 @@ export function EventsCarousel({ events, pastEventsOnly = false }: Props) {
   return (
     <>
       <section
-        aria-label="Eventi in evidenza"
+        aria-label={t('events.carousel.label')}
         className="relative w-full border-b border-border bg-muted/30 py-10 md:py-14"
       >
         <div className="container relative px-10 md:px-16">
           <Carousel
-            className={cn(
-              'mx-auto w-full max-w-4xl',
-              pastEventsOnly && '[&_[data-slot=carousel-item]]:saturate-[0.55]',
-            )}
+            className="mx-auto w-full max-w-4xl"
             opts={{
               align: 'center',
               containScroll: false,
@@ -78,19 +80,20 @@ export function EventsCarousel({ events, pastEventsOnly = false }: Props) {
                     href="/eventi"
                   >
                     <span className="font-heading text-xl font-medium text-foreground md:text-2xl">
-                      Tutti gli eventi
+                      {t('events.carousel.allTitle')}
                     </span>
                     <span className="mt-2 max-w-[14rem] text-sm text-muted-foreground md:text-base">
-                      Apri l’archivio completo, inclusi gli eventi passati
+                      {t('events.carousel.allDescription')}
                     </span>
                     <span className="mt-6 text-sm font-medium text-primary underline-offset-4 group-hover:underline">
-                      Vai agli eventi
+                      {t('events.carousel.cta')}
                     </span>
                   </Link>
                 </CarouselItem>
                 {events.map((event, index) => {
                   const slideIndex = index + 2
                   const active = current === slideIndex
+                  const past = isPastEvent(event)
                   return (
                     <CarouselItem
                       key={event.id}
@@ -100,18 +103,30 @@ export function EventsCarousel({ events, pastEventsOnly = false }: Props) {
                         className={cn(
                           'group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-xl border border-border shadow-sm transition-[opacity,transform] duration-300',
                           !active && 'scale-[0.97] opacity-40',
+                          past && active && 'opacity-90',
                         )}
                         type="button"
                         onClick={() => setDialogEvent(event)}
                       >
                         <Image
-                          alt={event.imageAlt}
-                          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          alt={event.coverImage.alt}
+                          className={cn(
+                            'object-cover transition-[transform,opacity,filter] duration-300 group-hover:scale-[1.02]',
+                            past && 'opacity-75 saturate-[0.72]',
+                          )}
                           fill
                           sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 33vw"
-                          src={event.imageSrc}
+                          src={event.coverImage.src}
+                          style={{
+                            objectPosition: getMediaObjectPosition(
+                              event.coverImage.focalX,
+                              event.coverImage.focalY,
+                            ),
+                          }}
                         />
-                        <span className="sr-only">Apri dettagli: {event.title}</span>
+                        <span className="sr-only">
+                          {tf('events.detail.openDetails', { title: event.title })}
+                        </span>
                       </button>
                     </CarouselItem>
                   )
@@ -129,8 +144,10 @@ export function EventsCarousel({ events, pastEventsOnly = false }: Props) {
       </section>
 
       <Dialog open={dialogEvent !== null} onOpenChange={(open) => !open && setDialogEvent(null)}>
-        <DialogContent className="max-h-[min(90vh,720px)] overflow-y-auto sm:max-w-lg">
-          {dialogEvent ? <EventDialogBody event={dialogEvent} /> : null}
+        <DialogContent className="max-h-[min(92vh,900px)] gap-0 overflow-y-auto p-0 sm:max-w-3xl md:max-w-4xl">
+          <div className="p-6 sm:p-8">
+            {dialogEvent ? <EventDialogBody event={dialogEvent} /> : null}
+          </div>
         </DialogContent>
       </Dialog>
     </>

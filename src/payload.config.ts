@@ -3,10 +3,11 @@ import 'dotenv/config'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import sharp from 'sharp'
 import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
+import { buildConfig, type Locale, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
+import { Tags } from './collections/Tags'
 import { Events } from './collections/Events'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -14,6 +15,9 @@ import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { SiteSettings } from './globals/SiteSettings/config'
+import { ALL_LOCALES, DEFAULT_LOCALE } from './config/localization'
+import { filterAvailableLocales } from './utilities/filterAvailableLocales'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -67,8 +71,16 @@ export default buildConfig({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
     },
+    /** Schema gestito con `payload migrate`, evita push automatico in dev. */
+    push: false,
   }),
-  collections: [Pages, Posts, Media, Categories, Events, Users],
+  collections: [Pages, Posts, Media, Categories, Tags, Events, Users],
+  localization: {
+    locales: ALL_LOCALES.map(({ code, label }) => ({ code, label })) as Locale[],
+    defaultLocale: DEFAULT_LOCALE,
+    fallback: true,
+    filterAvailableLocales,
+  },
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
@@ -83,7 +95,7 @@ export default buildConfig({
         ]
       : []),
   ],
-  globals: [Header, Footer],
+  globals: [Header, Footer, SiteSettings],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

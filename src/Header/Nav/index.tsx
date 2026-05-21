@@ -6,6 +6,8 @@ import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink, resolveCMSLinkHref } from '@/components/Link'
 import { Button } from '@/components/ui/button'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { useLocaleContext } from '@/providers/Locale'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import {
   Accordion,
@@ -46,8 +48,10 @@ function SubNavNextLinks({
   className?: string
   onNavigate?: () => void
 }) {
+  const { t } = useLocaleContext()
+
   return (
-    <nav className={cn('flex flex-col gap-0.5 p-1', className)} aria-label="Sottovoci">
+    <nav className={cn('flex flex-col gap-0.5 p-1', className)} aria-label={t('nav.subnav')}>
       {subNavItems.map((sub, j) => {
         const l = sub.link
         if (!l) return null
@@ -76,6 +80,7 @@ function SubNavNextLinks({
 }
 
 function DesktopNavItem({ item }: { item: NavItem }) {
+  const { tf } = useLocaleContext()
   const { link, referenceAnchor, primaryLinkClickable = true } = item
   const sub = subLinksOf(item)
   if (sub.length === 0) {
@@ -147,7 +152,7 @@ function DesktopNavItem({ item }: { item: NavItem }) {
               variant="ghost"
               size="icon-sm"
               className="size-8 shrink-0 text-primary"
-              aria-label={`Sottovoci: ${link?.label ?? ''}`}
+              aria-label={tf('nav.subnavFor', { label: link?.label ?? '' })}
             >
               <ChevronDownIcon className="size-4" />
             </Button>
@@ -168,6 +173,7 @@ function MobilePrimaryWithSubnav({
   item: NavItem
   onNavigate: () => void
 }) {
+  const { tf } = useLocaleContext()
   const [open, setOpen] = useState(false)
   const { link, referenceAnchor } = item
   const sub = subLinksOf(item)
@@ -186,7 +192,7 @@ function MobilePrimaryWithSubnav({
           type="button"
           className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
           aria-expanded={open}
-          aria-label={`Mostra sottovoci: ${link?.label ?? ''}`}
+          aria-label={tf('nav.showSubnav', { label: link?.label ?? '' })}
           onClick={() => setOpen((o) => !o)}
         >
           <ChevronDownIcon
@@ -255,19 +261,21 @@ function MobileNavItem({
 }
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+  const { t } = useLocaleContext()
   const navItems = data?.navItems || []
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <>
-      <nav className="hidden items-center gap-3 sm:flex" aria-label="Main">
+      <nav className="hidden items-center gap-3 sm:flex" aria-label={t('nav.main')}>
         {navItems.map((item, i) => (
           <DesktopNavItem key={item.id ?? i} item={item} />
         ))}
         <Link href="/search">
-          <span className="sr-only">Search</span>
+          <span className="sr-only">{t('nav.search')}</span>
           <SearchIcon className="w-5 text-primary" />
         </Link>
+        <LanguageSwitcher />
         <ThemeSelector />
       </nav>
 
@@ -276,20 +284,21 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           href="/search"
           className="inline-flex size-9 items-center justify-center rounded-md hover:bg-muted"
         >
-          <span className="sr-only">Search</span>
+          <span className="sr-only">{t('nav.search')}</span>
           <SearchIcon className="w-5 text-primary" />
         </Link>
+        <LanguageSwitcher />
         <ThemeSelector />
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger render={<Button variant="ghost" size="icon" />}>
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{t('nav.menu')}</span>
             <MenuIcon data-icon="inline-start" />
           </SheetTrigger>
           <SheetContent side="right" className="flex flex-col">
             <SheetHeader>
-              <SheetTitle className="sr-only">Menu</SheetTitle>
+              <SheetTitle className="sr-only">{t('nav.menu')}</SheetTitle>
             </SheetHeader>
-            <div className="flex flex-col gap-1" aria-label="Main">
+            <div className="flex flex-col gap-1" aria-label={t('nav.main')}>
               {navItems.map((item, i) => (
                 <MobileNavItem
                   key={item.id ?? i}

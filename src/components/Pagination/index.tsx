@@ -1,4 +1,5 @@
 'use client'
+
 import {
   Pagination as PaginationComponent,
   PaginationContent,
@@ -8,6 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import { useLocaleContext } from '@/providers/Locale'
 import { cn } from '@/utilities/ui'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -18,6 +20,7 @@ export const Pagination: React.FC<{
   totalPages: number
 }> = (props) => {
   const router = useRouter()
+  const { t } = useLocaleContext()
 
   const { className, page, totalPages } = props
   const hasNextPage = page < totalPages
@@ -32,7 +35,9 @@ export const Pagination: React.FC<{
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
+              aria-label={t('pagination.prevAria')}
               disabled={!hasPrevPage}
+              text={t('pagination.prev')}
               onClick={() => {
                 router.push(`/posts/page/${page - 1}`)
               }}
@@ -88,7 +93,9 @@ export const Pagination: React.FC<{
 
           <PaginationItem>
             <PaginationNext
+              aria-label={t('pagination.nextAria')}
               disabled={!hasNextPage}
+              text={t('pagination.next')}
               onClick={() => {
                 router.push(`/posts/page/${page + 1}`)
               }}

@@ -11,6 +11,7 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { EventsCarouselSection } from '@/components/EventsCarousel/EventsCarouselSection'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -98,6 +99,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
+  const localeOptions = await getPayloadLocaleOptions()
 
   const result = await payload.find({
     collection: 'pages',
@@ -105,6 +107,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     limit: 1,
     pagination: false,
     overrideAccess: draft,
+    ...localeOptions,
     where: {
       slug: {
         equals: slug,

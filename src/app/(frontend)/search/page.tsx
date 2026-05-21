@@ -3,6 +3,9 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { t } from '@/i18n/messages'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
+import { getRequestLocale } from '@/utilities/getRequestLocale'
 import React from 'react'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
@@ -13,21 +16,24 @@ type Args = {
     q: string
   }>
 }
+
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
+  const locale = await getRequestLocale()
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
+  const localeOptions = await getPayloadLocaleOptions()
 
   const posts = await payload.find({
     collection: 'search',
     depth: 1,
     limit: 12,
+    ...localeOptions,
     select: {
       title: true,
       slug: true,
       categories: true,
       meta: true,
     },
-    // pagination: false reduces overhead if you don't need totalDocs
     pagination: false,
     ...(query
       ? {
@@ -64,9 +70,9 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">Search</h1>
+          <h1 className="mb-8 lg:mb-16">{t(locale, 'search.title')}</h1>
 
-          <div className="max-w-[50rem] mx-auto">
+          <div className="mx-auto max-w-[50rem]">
             <Search />
           </div>
         </div>
@@ -75,14 +81,16 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs as CardPostData[]} />
       ) : (
-        <div className="container">No results found.</div>
+        <div className="container">{t(locale, 'search.noResults')}</div>
       )}
     </div>
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale()
+
   return {
-    title: `Payload Website Template Search`,
+    title: t(locale, 'search.title'),
   }
 }

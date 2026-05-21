@@ -3,6 +3,8 @@ import React from 'react'
 
 import { SiteLogo } from '@/components/SiteLogo'
 import { CMSLink } from '@/components/Link'
+import { formatMessage, t } from '@/i18n/messages'
+import { getRequestLocale } from '@/utilities/getRequestLocale'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 
@@ -10,9 +12,10 @@ import { FooterSocialLinks } from './FooterSocialLinks'
 import { flattenHeaderNavForFooter } from './flattenHeaderNav'
 
 export async function Footer() {
+  const locale = await getRequestLocale()
   const [footerData, headerData] = await Promise.all([
-    getCachedGlobal('footer', 1)(),
-    getCachedGlobal('header', 1)(),
+    getCachedGlobal('footer', 1),
+    getCachedGlobal('header', 1),
   ])
 
   const navEntries = flattenHeaderNavForFooter(headerData?.navItems)
@@ -30,7 +33,7 @@ export async function Footer() {
   const socialBlock = hasSocial ? (
     <div className="flex min-w-0 flex-col items-center max-sm:w-full sm:items-start">
       <p className="mb-2 w-full text-xs font-medium uppercase tracking-wide text-white/50 max-sm:text-center sm:mb-3 sm:text-left">
-        Social
+        {t(locale, 'footer.social')}
       </p>
       <FooterSocialLinks items={socialLinks} />
     </div>
@@ -39,10 +42,10 @@ export async function Footer() {
   const navBlock = hasNav ? (
     <nav
       className="flex min-w-0 flex-col items-center gap-2 max-sm:w-full max-sm:text-center sm:min-w-[12rem] sm:shrink-0 sm:items-start sm:gap-2.5 sm:text-left"
-      aria-label="Navigazione"
+      aria-label={t(locale, 'footer.navAria')}
     >
       <p className="mb-0.5 w-full text-xs font-medium uppercase tracking-wide text-white/50 max-sm:text-center sm:mb-1 sm:text-left">
-        Navigazione
+        {t(locale, 'footer.nav')}
       </p>
       {navEntries.map(({ key, link, referenceAnchor }) => (
         <CMSLink
@@ -59,7 +62,6 @@ export async function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-black text-white dark:bg-card">
       <div className="container flex flex-col gap-7 py-7 sm:gap-10 sm:pt-10 sm:pb-7">
-        {/* Stesso breakpoint dell&apos;header: &lt; sm stack compatto, ≥ sm riga orizzontale */}
         <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:justify-between sm:gap-8 lg:gap-12">
           <div className="flex w-full shrink-0 justify-center sm:w-auto sm:justify-start">
             <SiteLogo
@@ -72,7 +74,7 @@ export async function Footer() {
           <div className="max-w-md min-w-0 space-y-2.5 text-sm leading-relaxed text-white/90 max-sm:mx-auto max-sm:max-w-none max-sm:text-center sm:space-y-3 lg:max-w-sm sm:text-left">
             {hasSedeContatti ? (
               <p className="text-xs font-medium uppercase tracking-wide text-white/50">
-                Sede e contatti
+                {t(locale, 'footer.contacts')}
               </p>
             ) : null}
             {address ? (
@@ -90,7 +92,7 @@ export async function Footer() {
             ) : null}
             {emailPec ? (
               <p>
-                <span className="mr-1 text-white/60">PEC</span>
+                <span className="mr-1 text-white/60">{t(locale, 'footer.pec')}</span>
                 <a
                   className="underline decoration-white/40 underline-offset-4 transition hover:decoration-white"
                   href={`mailto:${emailPec}`}
@@ -101,7 +103,7 @@ export async function Footer() {
             ) : null}
             {codiceFiscale ? (
               <p className="text-white/80">
-                <span className="text-white/55">CF</span> {codiceFiscale}
+                <span className="text-white/55">{t(locale, 'footer.taxCode')}</span> {codiceFiscale}
               </p>
             ) : null}
           </div>
@@ -122,7 +124,7 @@ export async function Footer() {
         >
           {documents.length > 0 ? (
             <nav
-              aria-label="Documenti"
+              aria-label={t(locale, 'footer.documents')}
               className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-2"
             >
               {documents.map((row) => {
@@ -145,7 +147,7 @@ export async function Footer() {
             </nav>
           ) : null}
           <p className="w-full text-center text-xs text-white/55 max-sm:pt-1 sm:w-auto sm:shrink-0 sm:text-right sm:text-sm">
-            Copyright © {year}
+            {formatMessage(locale, 'footer.copyright', { year })}
           </p>
         </div>
       </div>

@@ -12,6 +12,7 @@ import type { Post } from '@/payload-types'
 
 import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -90,6 +91,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
+  const localeOptions = await getPayloadLocaleOptions()
 
   const result = await payload.find({
     collection: 'posts',
@@ -97,6 +99,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
     limit: 1,
     overrideAccess: draft,
     pagination: false,
+    ...localeOptions,
     where: {
       slug: {
         equals: slug,

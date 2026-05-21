@@ -2,6 +2,7 @@ import type { Post, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { getPayloadLocaleOptions } from '@/utilities/getPayloadLocaleOptions'
 import React from 'react'
 import RichText from '@/components/RichText'
 
@@ -20,6 +21,7 @@ export const ArchiveBlock: React.FC<
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
+    const localeOptions = await getPayloadLocaleOptions()
 
     const flattenedCategories = categories?.map((category) => {
       if (typeof category === 'object') return category.id
@@ -30,6 +32,7 @@ export const ArchiveBlock: React.FC<
       collection: 'posts',
       depth: 1,
       limit,
+      ...localeOptions,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {

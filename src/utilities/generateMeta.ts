@@ -19,21 +19,43 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   return url
 }
 
+type MetaWithImage = {
+  title?: string | null
+  description?: string | null
+  image?: Media | number | null
+}
+
+type MetaDoc = {
+  meta?: MetaWithImage | null
+  title?: string | null
+  slug?: string | null
+}
+
 export const generateMeta = async (args: {
-  doc: Partial<Page> | Partial<Post> | null
+  doc: Partial<Page> | Partial<Post> | MetaDoc | null
+  /** Es. `/eventi` per le pagine evento */
+  pathPrefix?: string
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { doc, pathPrefix } = args
 
-  const ogImage = getImageURL(doc?.meta?.image)
+  const meta = doc?.meta as MetaWithImage | undefined
+  const ogImage = getImageURL(meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+  const title = meta?.title
+    ? `${meta.title} | Payload Website Template`
+    : doc?.title
+      ? `${doc.title} | Payload Website Template`
+      : 'Payload Website Template'
+
+  const slug = doc?.slug
+  const pageUrl = slug
+    ? `${getServerSideURL()}${pathPrefix ?? ''}/${slug}`
+    : `${getServerSideURL()}${pathPrefix ?? '/'}`
 
   return {
-    description: doc?.meta?.description,
+    description: meta?.description ?? undefined,
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
+      description: meta?.description || '',
       images: ogImage
         ? [
             {
@@ -42,7 +64,7 @@ export const generateMeta = async (args: {
           ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      url: pageUrl,
     }),
     title,
   }

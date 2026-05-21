@@ -11,6 +11,7 @@ import { ensureEventDraftTitle } from './hooks/ensureEventDraftTitle'
 import { ensureUniqueEventSlug } from './hooks/ensureUniqueEventSlug'
 import { prepareNewEvent } from './hooks/prepareNewEvent'
 import { syncEventSearchText } from './hooks/syncEventSearchText'
+import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 
 import {
   MetaDescriptionField,
@@ -84,7 +85,8 @@ export const Events: CollectionConfig<'events'> = {
       defaultValue: false,
       admin: {
         position: 'sidebar',
-        description: 'Priorità nel carosello in homepage (prima degli altri eventi).',
+        description:
+          'Ordine prioritario in homepage e in /eventi; in elenco mostra il badge «In evidenza» sulla card.',
       },
     },
     {
@@ -109,16 +111,6 @@ export const Events: CollectionConfig<'events'> = {
         date: {
           pickerAppearance: 'dayAndTime',
         },
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
       },
     },
     {
@@ -306,7 +298,12 @@ export const Events: CollectionConfig<'events'> = {
   ],
   hooks: {
     beforeValidate: [prepareNewEvent],
-    beforeChange: [ensureEventDraftTitle, ensureUniqueEventSlug, syncEventSearchText],
+    beforeChange: [
+      populatePublishedAt,
+      ensureEventDraftTitle,
+      ensureUniqueEventSlug,
+      syncEventSearchText,
+    ],
     afterChange: [revalidateEvents],
     afterDelete: [revalidateEventsDelete],
   },

@@ -828,7 +828,7 @@ export interface Event {
    */
   hidden?: boolean | null;
   /**
-   * Priorità nel carosello in homepage (prima degli altri eventi).
+   * Ordine prioritario in homepage e in /eventi; in elenco mostra il badge «In evidenza» sulla card.
    */
   featured?: boolean | null;
   status: 'scheduled' | 'sold_out' | 'cancelled';

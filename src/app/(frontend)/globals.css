@@ -234,6 +234,13 @@
   }
 }
 
+@layer components {
+  .event-featured-badge {
+    background-color: lab(46.1626 67.407 46.2598);
+    @apply absolute top-3 left-3 z-10 rounded-full px-3.5 py-1.5 text-base font-semibold text-white shadow-md;
+  }
+}
+
 html {
   opacity: 0;
 }

@@ -37,7 +37,7 @@ export async function EventsCarouselSection() {
       draft: false,
       limit: 24,
       overrideAccess: false,
-      sort: 'startAt',
+      sort: '-featured,startAt',
       where: {
         and: [
           eventVisibilityWhere,
@@ -56,7 +56,7 @@ export async function EventsCarouselSection() {
       draft: false,
       limit: MAX_PAST_IN_CAROUSEL,
       overrideAccess: false,
-      sort: '-startAt',
+      sort: '-featured,-startAt',
       where: {
         and: [
           eventVisibilityWhere,

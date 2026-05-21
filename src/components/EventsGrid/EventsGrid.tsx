@@ -37,9 +37,7 @@ export function EventsGrid({ events, searchQuery = '' }: Props) {
           <Card className="flex h-full flex-col overflow-hidden pt-0">
             <Link className="relative aspect-[16/10] w-full bg-muted" href={`/eventi/${event.slug}`}>
               {event.featured ? (
-                <span className="absolute top-2 left-2 z-10 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
-                  In evidenza
-                </span>
+                <span className="event-featured-badge">In evidenza</span>
               ) : null}
               <Image
                 alt={event.coverImage.alt}

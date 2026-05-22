@@ -20,6 +20,7 @@ const aleo = Aleo({
 })
 
 import { AdminBar } from '@/components/AdminBar'
+import { AnnouncementBar } from '@/components/AnnouncementBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
 
+          <AnnouncementBar />
           <Header />
           {children}
           <Footer />

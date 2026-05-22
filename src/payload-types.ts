@@ -117,11 +117,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     'site-settings': SiteSetting;
+    'announcement-bar': AnnouncementBar;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'announcement-bar': AnnouncementBarSelect<false> | AnnouncementBarSelect<true>;
   };
   locale: 'it' | 'en' | 'sl';
   widgets: {
@@ -1968,6 +1970,26 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * Un solo avviso alla volta. Ogni volta che riattivi «Attivo», chi aveva chiuso la barra la rivede. Data di inizio nel futuro: l’avviso resta nascosto fino a quel momento.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcement-bar".
+ */
+export interface AnnouncementBar {
+  id: number;
+  enabled?: boolean | null;
+  message?: string | null;
+  /**
+   * Il testo sul sito sarà chiaro o scuro in automatico per restare leggibile.
+   */
+  backgroundColor?: string | null;
+  startAt?: string | null;
+  endAt?: string | null;
+  campaignId?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2048,6 +2070,21 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         enabled?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcement-bar_select".
+ */
+export interface AnnouncementBarSelect<T extends boolean = true> {
+  enabled?: T;
+  message?: T;
+  backgroundColor?: T;
+  startAt?: T;
+  endAt?: T;
+  campaignId?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

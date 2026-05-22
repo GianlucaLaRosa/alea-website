@@ -16,12 +16,14 @@ import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { SiteSettings } from './globals/SiteSettings/config'
+import { AnnouncementBar } from './globals/AnnouncementBar/config'
 import { ALL_LOCALES, DEFAULT_LOCALE } from './config/localization'
 import { filterAvailableLocales } from './utilities/filterAvailableLocales'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { adminOrEditor } from './access/adminOrEditor'
 import { getServerSideURL } from './utilities/getURL'
+import { ensureAnnouncementBarGlobal } from './hooks/ensureAnnouncementBarGlobal'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const filename = fileURLToPath(import.meta.url)
@@ -96,7 +98,10 @@ export default buildConfig({
         ]
       : []),
   ],
-  globals: [Header, Footer, SiteSettings],
+  globals: [Header, Footer, SiteSettings, AnnouncementBar],
+  onInit: async (payload) => {
+    await ensureAnnouncementBarGlobal(payload)
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

@@ -17,8 +17,14 @@ import * as migration_20260521_202757_localization from './20260521_202757_local
 import * as migration_20260521_210000_fix_events_version_links_id from './20260521_210000_fix_events_version_links_id';
 import * as migration_20260522_070404 from './20260522_070404';
 import * as migration_20260522_074611 from './20260522_074611';
+import * as migration_20260522_082339_announcement_bar from './20260522_082339_announcement_bar';
+import * as migration_20260522_090747 from './20260522_090747';
 import * as migration_20260522_120000_tags_rename_and_color from './20260522_120000_tags_rename_and_color';
 import * as migration_20260522_130000_users_roles from './20260522_130000_users_roles';
+import * as migration_20260522_140000_announcement_bar_global_seed from './20260522_140000_announcement_bar_global_seed';
+import * as migration_20260522_150000_announcement_bar_color_picker from './20260522_150000_announcement_bar_color_picker';
+import * as migration_20260522_160000_announcement_bar_single from './20260522_160000_announcement_bar_single';
+import * as migration_20260522_170000_fix_announcement_campaign_id from './20260522_170000_fix_announcement_campaign_id';
 
 export const migrations = [
   {
@@ -117,6 +123,16 @@ export const migrations = [
     name: '20260522_074611',
   },
   {
+    up: migration_20260522_082339_announcement_bar.up,
+    down: migration_20260522_082339_announcement_bar.down,
+    name: '20260522_082339_announcement_bar',
+  },
+  {
+    up: migration_20260522_090747.up,
+    down: migration_20260522_090747.down,
+    name: '20260522_090747',
+  },
+  {
     up: migration_20260522_120000_tags_rename_and_color.up,
     down: migration_20260522_120000_tags_rename_and_color.down,
     name: '20260522_120000_tags_rename_and_color',
@@ -124,6 +140,26 @@ export const migrations = [
   {
     up: migration_20260522_130000_users_roles.up,
     down: migration_20260522_130000_users_roles.down,
-    name: '20260522_130000_users_roles'
+    name: '20260522_130000_users_roles',
+  },
+  {
+    up: migration_20260522_140000_announcement_bar_global_seed.up,
+    down: migration_20260522_140000_announcement_bar_global_seed.down,
+    name: '20260522_140000_announcement_bar_global_seed',
+  },
+  {
+    up: migration_20260522_150000_announcement_bar_color_picker.up,
+    down: migration_20260522_150000_announcement_bar_color_picker.down,
+    name: '20260522_150000_announcement_bar_color_picker',
+  },
+  {
+    up: migration_20260522_160000_announcement_bar_single.up,
+    down: migration_20260522_160000_announcement_bar_single.down,
+    name: '20260522_160000_announcement_bar_single',
+  },
+  {
+    up: migration_20260522_170000_fix_announcement_campaign_id.up,
+    down: migration_20260522_170000_fix_announcement_campaign_id.down,
+    name: '20260522_170000_fix_announcement_campaign_id'
   },
 ];

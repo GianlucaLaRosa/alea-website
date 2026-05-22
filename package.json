@@ -5,7 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation payload migrate && payload generate:importmap && next build",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap && next build",
+    "build:local": "cross-env NODE_OPTIONS=--no-deprecation payload migrate && pnpm build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation payload migrate && next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
@@ -26,7 +27,8 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "ci": "payload migrate && payload generate:importmap && pnpm build"
+    "migrate:ci": "cross-env NODE_OPTIONS=--no-deprecation node scripts/migrate-ci.mjs",
+    "ci": "pnpm migrate:ci && pnpm build"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

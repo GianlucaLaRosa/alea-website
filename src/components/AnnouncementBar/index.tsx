@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getActiveAnnouncement } from '@/utilities/getActiveAnnouncement'
+import { getAnnouncementBarGlobal } from '@/utilities/getAnnouncementBarGlobal'
 import { AnnouncementBarClient } from './Component.client'
 
 export async function AnnouncementBar() {
-  const data = await getCachedGlobal('announcement-bar', 0)
+  const data = await getAnnouncementBarGlobal()
   const announcement = getActiveAnnouncement(data)
 
   if (!announcement) return null

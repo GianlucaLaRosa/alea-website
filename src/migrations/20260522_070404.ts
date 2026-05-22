@@ -21,12 +21,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_event_tags_fk";
   
-  DROP INDEX "event_tags_slug_idx";
-  DROP INDEX "event_tags_updated_at_idx";
-  DROP INDEX "event_tags_created_at_idx";
-  DROP INDEX "events_rels_event_tags_id_idx";
-  DROP INDEX "_events_v_rels_event_tags_id_idx";
-  DROP INDEX "payload_locked_documents_rels_event_tags_id_idx";
+  DROP INDEX IF EXISTS "event_tags_slug_idx";
+  DROP INDEX IF EXISTS "event_tags_updated_at_idx";
+  DROP INDEX IF EXISTS "event_tags_created_at_idx";
+  DROP INDEX IF EXISTS "events_rels_event_tags_id_idx";
+  DROP INDEX IF EXISTS "_events_v_rels_event_tags_id_idx";
+  DROP INDEX IF EXISTS "payload_locked_documents_rels_event_tags_id_idx";
   ALTER TABLE "events_locales" ALTER COLUMN "title" DROP DEFAULT;
   ALTER TABLE "_events_v_locales" ALTER COLUMN "version_title" DROP DEFAULT;
   ALTER TABLE "tags" ADD COLUMN "color" varchar DEFAULT '#6366f1' NOT NULL;

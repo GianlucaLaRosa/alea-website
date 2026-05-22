@@ -11,6 +11,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   EXCEPTION
     WHEN undefined_object THEN
       CREATE TYPE "public"."enum_events_event_status" AS ENUM('scheduled', 'sold_out', 'cancelled');
+      WHEN duplicate_object THEN NULL;
   END $migration$;
 
   DO $migration$ BEGIN

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { adminOrEditor } from '@/access/adminOrEditor'
 import { footerSocialPlatformOptions } from './socialPlatforms'
 import { revalidateFooter } from './hooks/revalidateFooter'
 
@@ -7,6 +8,7 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   access: {
     read: () => true,
+    update: adminOrEditor,
   },
   fields: [
     {

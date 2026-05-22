@@ -16,7 +16,9 @@ import * as migration_20260521_192000_events_draft_nullable_columns from './2026
 import * as migration_20260521_202757_localization from './20260521_202757_localization';
 import * as migration_20260521_210000_fix_events_version_links_id from './20260521_210000_fix_events_version_links_id';
 import * as migration_20260522_070404 from './20260522_070404';
+import * as migration_20260522_074611 from './20260522_074611';
 import * as migration_20260522_120000_tags_rename_and_color from './20260522_120000_tags_rename_and_color';
+import * as migration_20260522_130000_users_roles from './20260522_130000_users_roles';
 
 export const migrations = [
   {
@@ -110,8 +112,18 @@ export const migrations = [
     name: '20260522_070404',
   },
   {
+    up: migration_20260522_074611.up,
+    down: migration_20260522_074611.down,
+    name: '20260522_074611',
+  },
+  {
     up: migration_20260522_120000_tags_rename_and_color.up,
     down: migration_20260522_120000_tags_rename_and_color.down,
-    name: '20260522_120000_tags_rename_and_color'
+    name: '20260522_120000_tags_rename_and_color',
+  },
+  {
+    up: migration_20260522_130000_users_roles.up,
+    down: migration_20260522_130000_users_roles.down,
+    name: '20260522_130000_users_roles'
   },
 ];

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/adminOrEditor'
 import { authenticatedOrPublishedNotHidden } from '../../access/authenticatedOrPublishedNotHidden'
 import { eventDescriptionLexical } from '@/fields/defaultLexical'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -24,10 +24,10 @@ import {
 export const Events: CollectionConfig<'events'> = {
   slug: 'events',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: authenticatedOrPublishedNotHidden,
-    update: authenticated,
+    update: adminOrEditor,
   },
   admin: {
     defaultColumns: ['title', 'status', 'startAt', 'featured', 'hidden', '_status', 'updatedAt'],

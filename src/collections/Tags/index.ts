@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
 import { anyone } from '../../access/anyone'
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/adminOrEditor'
 
 const HEX_PATTERN = /^#[0-9A-Fa-f]{6}$/
 
@@ -13,10 +13,10 @@ export const Tags: CollectionConfig<'tags'> = {
     plural: 'Tag',
   },
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: anyone,
-    update: authenticated,
+    update: adminOrEditor,
   },
   admin: {
     useAsTitle: 'title',

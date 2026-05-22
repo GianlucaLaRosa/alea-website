@@ -1,7 +1,9 @@
 import type { Access } from 'payload'
 
-export const authenticatedOrPublished: Access = ({ req: { user } }) => {
-  if (user) {
+import { adminOrEditor } from './adminOrEditor'
+
+export const authenticatedOrPublished: Access = (args) => {
+  if (adminOrEditor(args)) {
     return true
   }
 

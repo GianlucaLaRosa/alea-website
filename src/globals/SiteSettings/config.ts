@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { ALL_LOCALE_CODES, ALL_LOCALES } from '@/config/localization'
-import { authenticated } from '@/access/authenticated'
+import { adminOrEditor } from '@/access/adminOrEditor'
 import { revalidateSiteSettings } from './hooks/revalidateSiteSettings'
 
 const defaultPublicLocales = ALL_LOCALES.map((locale) => ({
@@ -15,7 +15,7 @@ export const SiteSettings: GlobalConfig = {
   label: 'Impostazioni sito',
   access: {
     read: () => true,
-    update: authenticated,
+    update: adminOrEditor,
   },
   admin: {
     group: 'Configurazione',

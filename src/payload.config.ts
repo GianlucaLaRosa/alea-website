@@ -20,6 +20,7 @@ import { ALL_LOCALES, DEFAULT_LOCALE } from './config/localization'
 import { filterAvailableLocales } from './utilities/filterAvailableLocales'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { adminOrEditor } from './access/adminOrEditor'
 import { getServerSideURL } from './utilities/getURL'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
@@ -104,8 +105,7 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
+        if (adminOrEditor({ req })) return true
 
         const secret = process.env.CRON_SECRET
         if (!secret) return false

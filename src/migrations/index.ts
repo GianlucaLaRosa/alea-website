@@ -15,6 +15,7 @@ import * as migration_20260521_191000_events_version_search_text from './2026052
 import * as migration_20260521_192000_events_draft_nullable_columns from './20260521_192000_events_draft_nullable_columns';
 import * as migration_20260521_202757_localization from './20260521_202757_localization';
 import * as migration_20260521_210000_fix_events_version_links_id from './20260521_210000_fix_events_version_links_id';
+import * as migration_20260522_070404 from './20260522_070404';
 import * as migration_20260522_120000_tags_rename_and_color from './20260522_120000_tags_rename_and_color';
 
 export const migrations = [
@@ -104,8 +105,13 @@ export const migrations = [
     name: '20260521_210000_fix_events_version_links_id',
   },
   {
+    up: migration_20260522_070404.up,
+    down: migration_20260522_070404.down,
+    name: '20260522_070404',
+  },
+  {
     up: migration_20260522_120000_tags_rename_and_color.up,
     down: migration_20260522_120000_tags_rename_and_color.down,
-    name: '20260522_120000_tags_rename_and_color',
+    name: '20260522_120000_tags_rename_and_color'
   },
 ];

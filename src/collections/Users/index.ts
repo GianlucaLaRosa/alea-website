@@ -2,13 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 import { adminOnly } from '../../access/adminOnly'
 import { adminOrSelf } from '../../access/adminOrSelf'
-import { isAdminNavVisible, usersAdminPanel } from '../../access/adminPanel'
+import { cmsAdminPanel, isAdminNavVisible } from '../../access/adminPanel'
 import { assignFirstUserAsAdmin } from './hooks/assignFirstUserAsAdmin'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: usersAdminPanel,
+    admin: cmsAdminPanel,
     create: adminOnly,
     delete: adminOnly,
     read: adminOrSelf,

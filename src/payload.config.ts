@@ -35,6 +35,9 @@ const useVercelBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim())
 
 export default buildConfig({
   admin: {
+    avatar: {
+      Component: '@/components/admin/AdminUserAvatar',
+    },
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],

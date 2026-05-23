@@ -1,0 +1,43 @@
+@layer payload-default {
+  .admin-user-avatar[data-slot='avatar'] {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    overflow: hidden;
+    display: block;
+  }
+
+  .admin-user-avatar [data-slot='avatar-fallback'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    border: 1px solid var(--theme-elevation-200);
+    background: var(--theme-elevation-50);
+    color: var(--theme-elevation-600);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .app-header__account:hover .admin-user-avatar [data-slot='avatar-fallback'] {
+    background: var(--theme-elevation-200);
+    border-color: var(--theme-elevation-600);
+    color: var(--theme-elevation-600);
+  }
+
+  .admin-user-avatar--active [data-slot='avatar-fallback'] {
+    background: var(--theme-elevation-500);
+    border-color: var(--theme-text);
+    color: var(--theme-text);
+  }
+
+  [data-theme='light'] .admin-user-avatar--active [data-slot='avatar-fallback'] {
+    background: var(--theme-elevation-300);
+    border-color: var(--theme-elevation-600);
+    color: var(--theme-elevation-600);
+  }
+}

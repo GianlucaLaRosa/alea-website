@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url'
 import { Categories } from './collections/Categories'
 import { Tags } from './collections/Tags'
 import { Events } from './collections/Events'
+import { Games } from './collections/Games'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -21,7 +22,8 @@ import { ALL_LOCALES, DEFAULT_LOCALE } from './config/localization'
 import { filterAvailableLocales } from './utilities/filterAvailableLocales'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
-import { adminOrEditor } from './access/adminOrEditor'
+import { hasCmsAccess } from './access/roles'
+import { ensureMediaFolders } from './hooks/ensureMediaFolders'
 import { getServerSideURL } from './utilities/getURL'
 import { ensureAnnouncementBarGlobal } from './hooks/ensureAnnouncementBarGlobal'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
@@ -34,12 +36,16 @@ const useVercelBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim())
 export default buildConfig({
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      afterNavLinks: ['@/components/admin/MissingTranslationsNavLink'],
+      views: {
+        missingTranslations: {
+          Component: '@/components/admin/MissingTranslationsView',
+          exact: true,
+          path: '/missing-translations',
+        },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -77,7 +83,7 @@ export default buildConfig({
     /** Schema gestito con `payload migrate`, evita push automatico in dev. */
     push: false,
   }),
-  collections: [Pages, Posts, Media, Categories, Tags, Events, Users],
+  collections: [Pages, Posts, Media, Categories, Tags, Events, Games, Users],
   localization: {
     locales: ALL_LOCALES.map(({ code, label }) => ({ code, label })) as Locale[],
     defaultLocale: DEFAULT_LOCALE,
@@ -101,6 +107,7 @@ export default buildConfig({
   globals: [Header, Footer, SiteSettings, AnnouncementBar],
   onInit: async (payload) => {
     await ensureAnnouncementBarGlobal(payload)
+    await ensureMediaFolders(payload)
   },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
@@ -110,7 +117,7 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        if (adminOrEditor({ req })) return true
+        if (hasCmsAccess(req.user)) return true
 
         const secret = process.env.CRON_SECRET
         if (!secret) return false

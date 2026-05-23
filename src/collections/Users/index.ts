@@ -2,13 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 import { adminOnly } from '../../access/adminOnly'
 import { adminOrSelf } from '../../access/adminOrSelf'
-import { hasCmsAccess, hasRole } from '../../access/roles'
+import { isAdminNavVisible, usersAdminPanel } from '../../access/adminPanel'
 import { assignFirstUserAsAdmin } from './hooks/assignFirstUserAsAdmin'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: ({ req: { user } }) => hasCmsAccess(user),
+    admin: usersAdminPanel,
     create: adminOnly,
     delete: adminOnly,
     read: adminOrSelf,
@@ -17,6 +17,7 @@ export const Users: CollectionConfig = {
   admin: {
     defaultColumns: ['name', 'email', 'roles'],
     useAsTitle: 'name',
+    hidden: ({ user }) => !isAdminNavVisible(user),
   },
   auth: true,
   fields: [
@@ -30,17 +31,20 @@ export const Users: CollectionConfig = {
       hasMany: true,
       options: [
         { label: 'Admin', value: 'admin' },
-        { label: 'Editor', value: 'editor' },
+        { label: 'Gdt Specialist', value: 'gdt-specialist' },
+        { label: 'Gdr Specialist', value: 'gdr-specialist' },
+        { label: 'WarGame Specialist', value: 'wargame-specialist' },
+        { label: 'Social Specialist', value: 'social-specialist' },
       ],
-      defaultValue: ['editor'],
+      defaultValue: ['social-specialist'],
       required: true,
       saveToJWT: true,
       access: {
-        update: ({ req: { user } }) => hasRole(user, 'admin'),
+        update: ({ req: { user } }) => isAdminNavVisible(user),
       },
       admin: {
         description:
-          'Admin: accesso completo al backoffice e gestione utenti. Editor: accesso al CMS senza gestione utenti.',
+          'Admin: accesso completo. Gdt: giochi e media giochi. Social: eventi, barra annunci e media eventi. GDR/WarGame: ruoli preparati (nessun permesso CMS per ora). Ruoli multipli combinati.',
       },
     },
   ],

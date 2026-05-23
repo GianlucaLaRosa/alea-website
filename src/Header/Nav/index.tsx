@@ -69,7 +69,7 @@ function SubNavNextLinks({
             href={href}
             {...newTabProps}
             onClick={onNavigate}
-            className="rounded-xl px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
+            className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
           >
             {l.label}
           </Link>
@@ -95,7 +95,7 @@ function DesktopNavItem({ item }: { item: NavItem }) {
   }
 
   const triggerClass = cn(
-    'inline-flex h-auto items-center gap-1 px-1 py-0 text-lg font-medium text-primary underline-offset-4 hover:underline',
+    'inline-flex h-auto cursor-pointer items-center gap-1 px-1 py-0 text-lg font-medium text-primary underline-offset-4 hover:underline',
   )
 
   if (!primaryLinkClickable) {
@@ -110,7 +110,7 @@ function DesktopNavItem({ item }: { item: NavItem }) {
           {link?.label}
           <ChevronDownIcon className="size-4 opacity-70" aria-hidden />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-48">
+        <DropdownMenuContent align="start" className="min-w-48 rounded-md">
           {sub.map((s, j) => {
             const l = s.link
             if (!l) return null
@@ -158,7 +158,12 @@ function DesktopNavItem({ item }: { item: NavItem }) {
             </Button>
           }
         />
-        <PopoverContent align="start" side="bottom" sideOffset={6} className="w-auto min-w-48 p-0">
+        <PopoverContent
+          align="start"
+          side="bottom"
+          sideOffset={6}
+          className="w-auto min-w-48 rounded-md p-0"
+        >
           <SubNavNextLinks subNavItems={sub} />
         </PopoverContent>
       </Popover>
@@ -245,7 +250,7 @@ function MobileNavItem({
   return (
     <Accordion className="rounded-none border-0 bg-transparent shadow-none">
       <AccordionItem value={`nav-${index}`} className="border-0">
-        <AccordionTrigger className="min-h-11 py-3 text-lg hover:no-underline">
+        <AccordionTrigger className="min-h-11 cursor-pointer py-3 text-lg hover:no-underline">
           {link?.label}
         </AccordionTrigger>
         <AccordionContent className="border-0 pt-0">

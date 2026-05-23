@@ -1,8 +1,15 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
-import { anyone } from '../../access/anyone'
-import { adminOrEditor } from '../../access/adminOrEditor'
+import {
+  tagsCreate,
+  tagsDelete,
+  tagsRead,
+  tagsUpdate,
+} from '../../access/tagsAccess'
+import { tagsAdminPanel, isTagsNavVisible } from '../../access/adminPanel'
+import { assignRandomTagColor } from './hooks/assignRandomTagColor'
+import { validateTagScopeAccess } from './hooks/validateTagScopeAccess'
 
 const HEX_PATTERN = /^#[0-9A-Fa-f]{6}$/
 
@@ -13,17 +20,34 @@ export const Tags: CollectionConfig<'tags'> = {
     plural: 'Tag',
   },
   access: {
-    create: adminOrEditor,
-    delete: adminOrEditor,
-    read: anyone,
-    update: adminOrEditor,
+    admin: tagsAdminPanel,
+    create: tagsCreate,
+    delete: tagsDelete,
+    read: tagsRead,
+    update: tagsUpdate,
   },
   admin: {
+    hidden: ({ user }) => !isTagsNavVisible(user),
     useAsTitle: 'title',
     group: 'Contenuti',
     defaultColumns: ['title', 'color', 'slug', 'updatedAt'],
   },
   fields: [
+    {
+      name: 'scope',
+      type: 'select',
+      label: 'Ambito',
+      defaultValue: 'events',
+      required: true,
+      options: [
+        { label: 'Eventi', value: 'events' },
+        { label: 'Giochi', value: 'games' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'I tag «Solo giochi» vengono creati automaticamente da BoardGameGeek.',
+      },
+    },
     {
       name: 'title',
       type: 'text',
@@ -34,8 +58,7 @@ export const Tags: CollectionConfig<'tags'> = {
     {
       name: 'color',
       type: 'text',
-      required: true,
-      defaultValue: '#6366f1',
+      required: false,
       label: 'Colore',
       admin: {
         description: 'Colore mostrato sul sito per questo tag.',
@@ -54,4 +77,7 @@ export const Tags: CollectionConfig<'tags'> = {
       position: undefined,
     }),
   ],
+  hooks: {
+    beforeChange: [assignRandomTagColor, validateTagScopeAccess],
+  },
 }

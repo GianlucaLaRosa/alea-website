@@ -25,6 +25,12 @@ import * as migration_20260522_140000_announcement_bar_global_seed from './20260
 import * as migration_20260522_150000_announcement_bar_color_picker from './20260522_150000_announcement_bar_color_picker';
 import * as migration_20260522_160000_announcement_bar_single from './20260522_160000_announcement_bar_single';
 import * as migration_20260522_170000_fix_announcement_campaign_id from './20260522_170000_fix_announcement_campaign_id';
+import * as migration_20260523_132241_games_and_tags_scope from './20260523_132241_games_and_tags_scope';
+import * as migration_20260523_140000_games_drop_image_urls from './20260523_140000_games_drop_image_urls';
+import * as migration_20260523_150000_locked_documents_games_rels from './20260523_150000_locked_documents_games_rels';
+import * as migration_20260523_160000_games_drop_published from './20260523_160000_games_drop_published';
+import * as migration_20260523_170000_rbac_roles_and_media_scope from './20260523_170000_rbac_roles_and_media_scope';
+import * as migration_20260523_170001_migrate_editor_to_social_specialist from './20260523_170001_migrate_editor_to_social_specialist';
 
 export const migrations = [
   {
@@ -160,6 +166,36 @@ export const migrations = [
   {
     up: migration_20260522_170000_fix_announcement_campaign_id.up,
     down: migration_20260522_170000_fix_announcement_campaign_id.down,
-    name: '20260522_170000_fix_announcement_campaign_id'
+    name: '20260522_170000_fix_announcement_campaign_id',
+  },
+  {
+    up: migration_20260523_132241_games_and_tags_scope.up,
+    down: migration_20260523_132241_games_and_tags_scope.down,
+    name: '20260523_132241_games_and_tags_scope',
+  },
+  {
+    up: migration_20260523_140000_games_drop_image_urls.up,
+    down: migration_20260523_140000_games_drop_image_urls.down,
+    name: '20260523_140000_games_drop_image_urls',
+  },
+  {
+    up: migration_20260523_150000_locked_documents_games_rels.up,
+    down: migration_20260523_150000_locked_documents_games_rels.down,
+    name: '20260523_150000_locked_documents_games_rels',
+  },
+  {
+    up: migration_20260523_160000_games_drop_published.up,
+    down: migration_20260523_160000_games_drop_published.down,
+    name: '20260523_160000_games_drop_published',
+  },
+  {
+    up: migration_20260523_170000_rbac_roles_and_media_scope.up,
+    down: migration_20260523_170000_rbac_roles_and_media_scope.down,
+    name: '20260523_170000_rbac_roles_and_media_scope',
+  },
+  {
+    up: migration_20260523_170001_migrate_editor_to_social_specialist.up,
+    down: migration_20260523_170001_migrate_editor_to_social_specialist.down,
+    name: '20260523_170001_migrate_editor_to_social_specialist',
   },
 ];

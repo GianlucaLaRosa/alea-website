@@ -11,6 +11,7 @@ type TagBadgeProps = {
   className?: string
   highlightQuery?: string
   href?: string
+  onClick?: () => void
 }
 
 const badgeClassName =
@@ -22,6 +23,7 @@ export function TagBadge({
   className,
   highlightQuery,
   href,
+  onClick,
 }: TagBadgeProps) {
   const styles = getTagColorStyles(color)
   const content =
@@ -31,13 +33,21 @@ export function TagBadge({
       children
     )
 
-  const classNames = cn(badgeClassName, className)
+  const classNames = cn(badgeClassName, onClick && 'cursor-pointer', className)
 
   if (href) {
     return (
       <Link className={classNames} href={href} style={styles}>
         {content}
       </Link>
+    )
+  }
+
+  if (onClick) {
+    return (
+      <button className={classNames} onClick={onClick} style={styles} type="button">
+        {content}
+      </button>
     )
   }
 

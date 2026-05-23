@@ -1,10 +1,10 @@
 import type { Access, Where } from 'payload'
 
-import { adminOrEditor } from './adminOrEditor'
+import { canManageEvents } from './canManageEvents'
 
-/** Pubblico: solo bozze pubblicate e non nascoste. Admin/editor: tutto. */
+/** Pubblico: solo bozze pubblicate e non nascoste. Admin/social specialist: tutto. */
 export const authenticatedOrPublishedNotHidden: Access = (args) => {
-  if (adminOrEditor(args)) return true
+  if (canManageEvents(args)) return true
 
   const constraint: Where = {
     and: [

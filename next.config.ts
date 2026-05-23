@@ -28,6 +28,10 @@ const nextConfig: NextConfig = {
           protocol: url.protocol.replace(':', '') as 'http' | 'https',
         }
       }),
+      {
+        protocol: 'https',
+        hostname: 'cf.geekdo-images.com',
+      },
     ],
   },
   webpack: (webpackConfig) => {

@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     tags: Tag;
     events: Event;
+    games: Game;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -97,6 +98,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    games: GamesSelect<false> | GamesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -284,6 +286,10 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  /**
+   * Determina cartella e permessi. GDR/WarGame riservati a usi futuri.
+   */
+  scope: 'system' | 'games' | 'events' | 'gdr' | 'wargame';
   alt?: string | null;
   caption?: {
     root: {
@@ -429,9 +435,9 @@ export interface User {
   id: number;
   name?: string | null;
   /**
-   * Admin: accesso completo al backoffice e gestione utenti. Editor: accesso al CMS senza gestione utenti.
+   * Admin: accesso completo. Gdt: giochi e media giochi. Social: eventi, barra annunci e media eventi. GDR/WarGame: ruoli preparati (nessun permesso CMS per ora). Ruoli multipli combinati.
    */
-  roles: ('admin' | 'editor')[];
+  roles: ('admin' | 'gdt-specialist' | 'gdr-specialist' | 'wargame-specialist' | 'social-specialist')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -799,11 +805,15 @@ export interface Form {
  */
 export interface Tag {
   id: number;
+  /**
+   * I tag «Solo giochi» vengono creati automaticamente da BoardGameGeek.
+   */
+  scope: 'events' | 'games';
   title: string;
   /**
    * Colore mostrato sul sito per questo tag.
    */
-  color: string;
+  color?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -907,6 +917,88 @@ export interface Event {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Importa da BoardGameGeek con l’URL oppure compila il form manualmente. I tag categoria/meccanica vengono creati automaticamente.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "games".
+ */
+export interface Game {
+  id: number;
+  /**
+   * Impostato dall’import BGG; usato per evitare duplicati.
+   */
+  bggId: number;
+  /**
+   * Compilato dall’import BGG (sola lettura).
+   */
+  bggUrl?: string | null;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  importWarnings?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Mostrata sulle card in elenco.
+   */
+  shortDescription?: string | null;
+  /**
+   * Testo completo nella pagina del gioco (senza HTML).
+   */
+  description?: string | null;
+  minPlayers?: number | null;
+  maxPlayers?: number | null;
+  /**
+   * Minuti.
+   */
+  minPlayTime?: number | null;
+  /**
+   * Minuti.
+   */
+  maxPlayTime?: number | null;
+  tags?: (number | Tag)[] | null;
+  bggTaxonomy?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Elenco da BGG. Spunta «Posseduta» per le espansioni in collezione. Puoi aggiungere righe manualmente.
+   */
+  expansions?:
+    | {
+        name: string;
+        bggId?: number | null;
+        owned?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Copertina in elenco. Dall’import BGG viene caricata subito; puoi sostituirla con un upload.
+   */
+  cardImage?: (number | null) | Media;
+  /**
+   * Accanto a titolo e tag in scheda (desktop) o sopra (mobile).
+   */
+  detailImage?: (number | null) | Media;
+  /**
+   * Mostrata nel testo della descrizione (testo attorno su desktop).
+   */
+  heroImage?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1121,6 +1213,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'events';
         value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'games';
+        value: number | Game;
       } | null)
     | ({
         relationTo: 'users';
@@ -1359,6 +1455,7 @@ export interface PostsSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  scope?: T;
   alt?: T;
   caption?: T;
   folder?: T;
@@ -1473,6 +1570,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "tags_select".
  */
 export interface TagsSelect<T extends boolean = true> {
+  scope?: T;
   title?: T;
   color?: T;
   generateSlug?: T;
@@ -1521,6 +1619,44 @@ export interface EventsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "games_select".
+ */
+export interface GamesSelect<T extends boolean = true> {
+  bggId?: T;
+  bggUrl?: T;
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  importWarnings?: T;
+  shortDescription?: T;
+  description?: T;
+  minPlayers?: T;
+  maxPlayers?: T;
+  minPlayTime?: T;
+  maxPlayTime?: T;
+  tags?: T;
+  bggTaxonomy?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  expansions?:
+    | T
+    | {
+        name?: T;
+        bggId?: T;
+        owned?: T;
+        id?: T;
+      };
+  cardImage?: T;
+  detailImage?: T;
+  heroImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1833,6 +1969,10 @@ export interface Header {
   logo?: (number | null) | Media;
   navItems?:
     | {
+        /**
+         * If off, the label only opens the sub-menu (desktop) or accordion (mobile). If on, the primary URL stays a real link and a separate control opens sub-links.
+         */
+        primaryLinkClickable?: boolean | null;
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -1852,10 +1992,6 @@ export interface Header {
          * For internal links only: HTML id of the target section on the page (without #).
          */
         referenceAnchor?: string | null;
-        /**
-         * If off, the label only opens the sub-menu (desktop) or accordion (mobile). If on, the primary URL stays a real link and a separate control opens sub-links.
-         */
-        primaryLinkClickable?: boolean | null;
         /**
          * Optional. When empty, this row is a single top-level link.
          */
@@ -1998,6 +2134,7 @@ export interface HeaderSelect<T extends boolean = true> {
   navItems?:
     | T
     | {
+        primaryLinkClickable?: T;
         link?:
           | T
           | {
@@ -2008,7 +2145,6 @@ export interface HeaderSelect<T extends boolean = true> {
               label?: T;
             };
         referenceAnchor?: T;
-        primaryLinkClickable?: T;
         subNavItems?:
           | T
           | {

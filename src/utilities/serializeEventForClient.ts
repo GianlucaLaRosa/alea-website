@@ -38,6 +38,7 @@ export type SerializedEventForClient = {
 
 function serializeEventTag(tag: number | Tag): SerializedEventTag | null {
   if (typeof tag !== 'object' || !tag.slug) return null
+  if (tag.scope && tag.scope !== 'events') return null
   return {
     id: tag.id,
     title: tag.title,

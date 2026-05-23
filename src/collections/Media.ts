@@ -8,8 +8,14 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { anyone } from '../access/anyone'
-import { adminOrEditor } from '../access/adminOrEditor'
+import {
+  mediaCreate,
+  mediaDelete,
+  mediaRead,
+  mediaUpdate,
+} from '../access/mediaAccess'
+import { isAdminNavVisible, isMediaNavVisible, mediaAdminPanel } from '../access/adminPanel'
+import { assignMediaScopeAndFolder } from './Media/hooks/assignMediaScopeAndFolder'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,16 +24,41 @@ export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
   access: {
-    create: adminOrEditor,
-    delete: adminOrEditor,
-    read: anyone,
-    update: adminOrEditor,
+    admin: mediaAdminPanel,
+    create: mediaCreate,
+    delete: mediaDelete,
+    read: mediaRead,
+    update: mediaUpdate,
+  },
+  admin: {
+    group: 'Contenuti',
+    hidden: ({ user }) => !isMediaNavVisible(user),
   },
   fields: [
     {
+      name: 'scope',
+      type: 'select',
+      required: true,
+      defaultValue: 'system',
+      label: 'Ambito',
+      options: [
+        { label: 'Sistema', value: 'system' },
+        { label: 'Giochi', value: 'games' },
+        { label: 'Eventi', value: 'events' },
+        { label: 'GDR', value: 'gdr' },
+        { label: 'WarGame', value: 'wargame' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Determina cartella e permessi. GDR/WarGame riservati a usi futuri.',
+      },
+      access: {
+        update: ({ req: { user } }) => isAdminNavVisible(user),
+      },
+    },
+    {
       name: 'alt',
       type: 'text',
-      //required: true,
     },
     {
       name: 'caption',
@@ -39,8 +70,10 @@ export const Media: CollectionConfig = {
       }),
     },
   ],
+  hooks: {
+    beforeChange: [assignMediaScopeAndFolder],
+  },
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,

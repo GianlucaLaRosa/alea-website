@@ -16,6 +16,18 @@ You are an expert Payload CMS developer. When working with Payload projects, fol
 - To validate typescript correctness after modifying code run `tsc --noEmit`
 - Generate import maps after creating or modifying components.
 
+## Database migrations
+
+- **Single source of truth:** `src/migrations/` via `payload migrate`. `push: false` on the Postgres adapter — do not rely on dev schema push.
+- **After schema changes:** `pnpm payload migrate:create <name>` → `pnpm docker:migrate` (or `pnpm dev`) → `pnpm generate:types`.
+- **Prefer idempotent SQL** in hand-written migrations: `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS`, `DO … EXCEPTION WHEN duplicate_object` (see `20260522_160000_announcement_bar_single.ts`, `20260523_150000_locked_documents_games_rels.ts`).
+- **Access control naming:** `authenticatedOrPublished` uses `_status: 'published'` (Pages, Posts with drafts). The `games` collection has no draft/published flag: public `read` uses `anyone` (all games are visible once created).
+- **Ruoli CMS:** `admin` (tutto), `gdt-specialist` (giochi, tag giochi, media `games`), `social-specialist` (eventi, barra annunci, tag eventi, media `events`), `gdr-specialist` / `wargame-specialist` (assegnabili, nessun permesso CMS finché non esistono le collection). Ruoli multipli combinati in OR. `editor` migrato a `social-specialist`.
+- **Media:** campo `scope` (`system` | `games` | `events` | `gdr` | `wargame`) + cartelle Payload (`Sistema`, `Giochi`, `Eventi`, …). Access control per scope; upload BGG imposta `games`.
+- **Traduzioni admin:** vista `/admin/missing-translations` + link nav con contatore; ambito filtrato per ruolo (`translationContextsForUser`).
+- **Tags:** `scope` is `events` or `games` only (no shared tags). Event forms filter `scope: events`; game forms filter `scope: games`. BGG import creates game-scoped tags with random colors via `resolveGameTagIds`.
+- **Local reset** if migrations and DB are out of sync: `pnpm docker:reset`.
+
 ## Project Structure
 
 ```

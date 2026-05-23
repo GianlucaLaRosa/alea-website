@@ -1,15 +1,9 @@
 import type { Access } from 'payload'
 
-import { adminOrEditor } from './adminOrEditor'
+import { adminOnly } from './adminOnly'
 
+/** Pubblico: solo bozze con `_status` published (Pages, Posts). Admin: tutto. */
 export const authenticatedOrPublished: Access = (args) => {
-  if (adminOrEditor(args)) {
-    return true
-  }
-
-  return {
-    _status: {
-      equals: 'published',
-    },
-  }
+  if (adminOnly(args)) return true
+  return { _status: { equals: 'published' } }
 }

@@ -1,7 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
-import { adminOrEditor } from '../../access/adminOrEditor'
+import { canManageEvents } from '../../access/canManageEvents'
+import { eventsAdminPanel, isEventsNavVisible } from '../../access/adminPanel'
 import { authenticatedOrPublishedNotHidden } from '../../access/authenticatedOrPublishedNotHidden'
 import { eventDescriptionLexical } from '@/fields/defaultLexical'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -24,12 +25,14 @@ import {
 export const Events: CollectionConfig<'events'> = {
   slug: 'events',
   access: {
-    create: adminOrEditor,
-    delete: adminOrEditor,
+    admin: eventsAdminPanel,
+    create: canManageEvents,
+    delete: canManageEvents,
     read: authenticatedOrPublishedNotHidden,
-    update: adminOrEditor,
+    update: canManageEvents,
   },
   admin: {
+    hidden: ({ user }) => !isEventsNavVisible(user),
     defaultColumns: ['title', 'status', 'startAt', 'featured', 'hidden', '_status', 'updatedAt'],
     description:
       'Gli eventi già pubblicati compaiono con filtro «Pubblicato» o «Tutti» in alto a destra (non solo «Bozza»).',
@@ -146,6 +149,9 @@ export const Events: CollectionConfig<'events'> = {
               relationTo: 'tags',
               hasMany: true,
               label: 'Tag',
+              filterOptions: {
+                scope: { equals: 'events' },
+              },
             },
             {
               name: 'startAt',

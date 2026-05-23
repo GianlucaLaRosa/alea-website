@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-import { adminOrEditor } from '@/access/adminOrEditor'
+import { canManageEvents } from '@/access/canManageEvents'
+import { isEventsNavVisible } from '@/access/adminPanel'
 import { DEFAULT_ANNOUNCEMENT_BAR_COLOR } from '@/utilities/announcementBarColors'
 import {
   createAnnouncementDismissKey,
@@ -20,10 +21,11 @@ export const AnnouncementBar: GlobalConfig = {
   label: 'Barra annunci',
   access: {
     read: () => true,
-    update: adminOrEditor,
+    update: canManageEvents,
   },
   admin: {
     group: 'Configurazione',
+    hidden: ({ user }) => !isEventsNavVisible(user),
     description:
       'Un solo avviso alla volta. Ogni volta che riattivi «Attivo», chi aveva chiuso la barra la rivede. Data di inizio nel futuro: l’avviso resta nascosto fino a quel momento.',
   },

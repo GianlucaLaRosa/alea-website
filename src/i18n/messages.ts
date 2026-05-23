@@ -76,6 +76,35 @@ export type MessageKey =
   | 'search.noResults'
   | 'theme.light'
   | 'theme.dark'
+  | 'games.title'
+  | 'games.description'
+  | 'games.search.label'
+  | 'games.search.placeholder'
+  | 'games.search.noResults'
+  | 'games.empty.filters'
+  | 'games.empty.catalog'
+  | 'games.filter.players'
+  | 'games.filter.duration'
+  | 'games.filter.playersRange'
+  | 'games.filter.durationRange'
+  | 'games.filter.min'
+  | 'games.filter.max'
+  | 'games.filter.reset'
+  | 'games.filter.any'
+  | 'games.filter.durationBucket'
+  | 'games.filter.duration300plus'
+  | 'games.filter.playersCount'
+  | 'games.filter.players10plus'
+  | 'games.filter.selectedCount'
+  | 'games.resultsCount'
+  | 'games.players'
+  | 'games.duration'
+  | 'games.minutesAbbr'
+  | 'games.card.details'
+  | 'games.detail.back'
+  | 'games.notFound'
+  | 'games.expansions.owned'
+  | 'games.bggLink'
 
 const it: Record<MessageKey, string> = {
   'common.close': 'Chiudi',
@@ -153,6 +182,35 @@ const it: Record<MessageKey, string> = {
   'search.noResults': 'Nessun risultato.',
   'theme.light': 'Tema chiaro',
   'theme.dark': 'Tema scuro',
+  'games.title': 'Giochi',
+  'games.description': 'La collezione di giochi da tavolo disponibili.',
+  'games.search.label': 'Cerca giochi',
+  'games.search.placeholder': 'Cerca per nome o tag…',
+  'games.search.noResults': 'Nessun gioco corrisponde alla ricerca.',
+  'games.empty.filters': 'Nessun gioco corrisponde ai filtri.',
+  'games.empty.catalog': 'Nessun gioco in catalogo al momento.',
+  'games.filter.players': 'Giocatori',
+  'games.filter.duration': 'Durata',
+  'games.filter.playersRange': 'Giocatori (intervallo)',
+  'games.filter.durationRange': 'Durata in minuti (intervallo)',
+  'games.filter.min': 'Da',
+  'games.filter.max': 'A',
+  'games.filter.reset': 'Reimposta filtri',
+  'games.filter.any': 'Tutti',
+  'games.filter.durationBucket': '{min}–{max} min',
+  'games.filter.duration300plus': '300+ min',
+  'games.filter.playersCount': '{count}',
+  'games.filter.players10plus': '10+',
+  'games.filter.selectedCount': '{count} selezionati',
+  'games.resultsCount': '{count} di {total} giochi',
+  'games.players': 'Giocatori',
+  'games.duration': 'Durata',
+  'games.minutesAbbr': 'min',
+  'games.card.details': 'Scheda gioco',
+  'games.detail.back': 'Giochi',
+  'games.notFound': 'Gioco non trovato',
+  'games.expansions.owned': 'Espansioni in collezione',
+  'games.bggLink': 'Scheda su BoardGameGeek',
 }
 
 const en: Record<MessageKey, string> = {
@@ -231,6 +289,35 @@ const en: Record<MessageKey, string> = {
   'search.noResults': 'No results found.',
   'theme.light': 'Light theme',
   'theme.dark': 'Dark theme',
+  'games.title': 'Games',
+  'games.description': 'Our board game collection.',
+  'games.search.label': 'Search games',
+  'games.search.placeholder': 'Search by name or tag…',
+  'games.search.noResults': 'No games match your search.',
+  'games.empty.filters': 'No games match the filters.',
+  'games.empty.catalog': 'No games in the catalog yet.',
+  'games.filter.players': 'Players',
+  'games.filter.duration': 'Duration',
+  'games.filter.playersRange': 'Players (range)',
+  'games.filter.durationRange': 'Duration in minutes (range)',
+  'games.filter.min': 'From',
+  'games.filter.max': 'To',
+  'games.filter.reset': 'Reset filters',
+  'games.filter.any': 'Any',
+  'games.filter.durationBucket': '{min}–{max} min',
+  'games.filter.duration300plus': '300+ min',
+  'games.filter.playersCount': '{count}',
+  'games.filter.players10plus': '10+',
+  'games.filter.selectedCount': '{count} selected',
+  'games.resultsCount': '{count} of {total} games',
+  'games.players': 'Players',
+  'games.duration': 'Duration',
+  'games.minutesAbbr': 'min',
+  'games.card.details': 'Game details',
+  'games.detail.back': 'Games',
+  'games.notFound': 'Game not found',
+  'games.expansions.owned': 'Owned expansions',
+  'games.bggLink': 'View on BoardGameGeek',
 }
 
 const sl: Record<MessageKey, string> = {
@@ -309,6 +396,35 @@ const sl: Record<MessageKey, string> = {
   'search.noResults': 'Ni rezultatov.',
   'theme.light': 'Svetla tema',
   'theme.dark': 'Temna tema',
+  'games.title': 'Igre',
+  'games.description': 'Naša zbirka družabnih iger.',
+  'games.search.label': 'Išči igre',
+  'games.search.placeholder': 'Išči po imenu ali oznaki…',
+  'games.search.noResults': 'Nobena igra ne ustreza iskanju.',
+  'games.empty.filters': 'Nobena igra ne ustreza filtrom.',
+  'games.empty.catalog': 'V katalogu trenutno ni iger.',
+  'games.filter.players': 'Igralci',
+  'games.filter.duration': 'Trajanje',
+  'games.filter.playersRange': 'Igralci (razpon)',
+  'games.filter.durationRange': 'Trajanje v minutah (razpon)',
+  'games.filter.min': 'Od',
+  'games.filter.max': 'Do',
+  'games.filter.reset': 'Ponastavi filtre',
+  'games.filter.any': 'Vsi',
+  'games.filter.durationBucket': '{min}–{max} min',
+  'games.filter.duration300plus': '300+ min',
+  'games.filter.playersCount': '{count}',
+  'games.filter.players10plus': '10+',
+  'games.filter.selectedCount': '{count} izbranih',
+  'games.resultsCount': '{count} od {total} iger',
+  'games.players': 'Igralci',
+  'games.duration': 'Trajanje',
+  'games.minutesAbbr': 'min',
+  'games.card.details': 'Podrobnosti igre',
+  'games.detail.back': 'Igre',
+  'games.notFound': 'Igra ni bila najdena',
+  'games.expansions.owned': 'Razširitve v zbirki',
+  'games.bggLink': 'Ogled na BoardGameGeek',
 }
 
 const catalogs: Record<LocaleCode, Record<MessageKey, string>> = { it, en, sl }

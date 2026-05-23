@@ -1,14 +1,18 @@
 import type { GlobalConfig } from 'payload'
 
-import { adminOrEditor } from '@/access/adminOrEditor'
+import { adminOnly } from '@/access/adminOnly'
 import { link } from '@/fields/link'
+import { validateHeaderNavItemLink } from '@/Header/validateNavItemLink'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
   slug: 'header',
   access: {
     read: () => true,
-    update: adminOrEditor,
+    update: adminOnly,
+  },
+  admin: {
+    hidden: ({ user }) => !user?.roles?.includes('admin'),
   },
   fields: [
     {
@@ -25,8 +29,22 @@ export const Header: GlobalConfig = {
       type: 'array',
       localized: true,
       fields: [
+        {
+          name: 'primaryLinkClickable',
+          type: 'checkbox',
+          label: 'Primary link navigates when sub-links exist',
+          defaultValue: true,
+          admin: {
+            description:
+              'If off, the label only opens the sub-menu (desktop) or accordion (mobile). If on, the primary URL stays a real link and a separate control opens sub-links.',
+          },
+        },
         link({
           appearances: false,
+          hrefRequired: false,
+          overrides: {
+            validate: validateHeaderNavItemLink,
+          },
         }),
         {
           name: 'referenceAnchor',
@@ -36,16 +54,6 @@ export const Header: GlobalConfig = {
             description:
               'For internal links only: HTML id of the target section on the page (without #).',
             condition: (_, siblingData) => siblingData?.link?.type === 'reference',
-          },
-        },
-        {
-          name: 'primaryLinkClickable',
-          type: 'checkbox',
-          label: 'Primary link navigates when sub-links exist',
-          defaultValue: true,
-          admin: {
-            description:
-              'If off, the label only opens the sub-menu (desktop) or accordion (mobile). If on, the primary URL stays a real link and a separate control opens sub-links.',
           },
         },
         {

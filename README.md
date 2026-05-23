@@ -85,6 +85,27 @@ To do so, follow these steps:
 - Modify the `docker-compose.yml` file's `POSTGRES_DB` to match the above `<dbname>`
 - Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
 
+### Database migrations (Payload)
+
+Lo schema Postgres è gestito **solo** con le migrazioni in `src/migrations/`, non con il push automatico in dev (`push: false` in `payload.config.ts`).
+
+**Workflow consigliato**
+
+1. Modifichi collection, globals o campi in `src/`.
+2. Generi una migrazione: `pnpm payload migrate:create nome_descrittivo` (rispondi ai prompt; in caso di dubbio preferisci «create column» rispetto a «rename»).
+3. Applichi: `pnpm docker:migrate` oppure `pnpm dev` (lo script `dev` esegue `payload migrate` prima di `next dev`).
+4. Rigeneri i tipi: `pnpm generate:types`.
+
+**Se compare il prompt** «you've run Payload in dev mode… data loss will occur»: il DB è già stato allineato al codice (push passato o migrazioni parziali). Conferma solo se sei in locale e accetti il rischio; in caso di errore tipo `relation already exists`, la migrazione va resa idempotente (`IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS`) come nelle migrazioni `20260522_160000_*` o `20260522_090747`.
+
+**DB locale incoerente (solo sviluppo)**
+
+```bash
+pnpm docker:reset   # volume Postgres nuovo + migrate da zero
+```
+
+**CI / produzione:** `pnpm migrate:ci` (risponde automaticamente al prompt dev-push).
+
 ## How it works
 
 The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
